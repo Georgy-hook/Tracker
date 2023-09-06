@@ -169,11 +169,6 @@ extension TrackersViewController:TrackersViewControllerProtocol {
                 }
             }
         }
-        trackersCategories = [
-            TrackerCategory(title: "fruits", trackers: [Tracker(id: UUID(), name: "melon", color: "Color selection 1", emoji: "😂", schedule: [2,1,3]), Tracker(id: UUID(), name: "pear", color: "Color selection 2", emoji: "🥦", schedule: [4,5,6]), Tracker(id: UUID(), name: "Apple", color: "Color selection 3", emoji: "🙏", schedule: [1,2,5])]),
-            TrackerCategory(title: "monet", trackers: [Tracker(id: UUID(), name: "dollar", color: "Color selection 1", emoji: "😂", schedule: [1,2,3]), Tracker(id: UUID(), name: "rubble", color: "Color selection 2", emoji: "🥦", schedule: [4,5,6]), Tracker(id: UUID(), name: "uan", color: "Color selection 3", emoji: "🙏", schedule: [1,3,5])])
-        ]
-        
         trackersCollectionView.set(cells: trackersCategories)
         tempStorage.resetTempTracker()
     }

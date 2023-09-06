@@ -29,12 +29,13 @@ struct Tracker {
     }
     
     func daysUntilNextScheduledDay(currentDay: Int) -> Int {
-            let nextScheduledDay = schedule.first(where: { $0 >= currentDay }) ?? schedule.first
-            if let nextScheduledDay = nextScheduledDay {
-                let daysUntilNextDay = nextScheduledDay - currentDay
-                return daysUntilNextDay
-            } else {
-                return -1
-            }
+        let nextScheduledDay = schedule.first(where: { $0 >= currentDay }) ?? schedule.first
+        if let nextScheduledDay = nextScheduledDay {
+            let daysUntilNextDay = nextScheduledDay - currentDay
+            guard daysUntilNextDay > 0 else {return daysUntilNextDay + 7}
+            return daysUntilNextDay
+        } else {
+            return -1
         }
+    }
 }
