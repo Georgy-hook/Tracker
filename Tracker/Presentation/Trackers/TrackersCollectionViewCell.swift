@@ -164,7 +164,7 @@ extension TrackersCollectionViewCell{
 private extension TrackersCollectionViewCell{
     @objc func checkButtonDidTapped(){
         guard let tracker = tracker else {return}
-        let currentDay = Calendar.current.component(.weekday, from: Date()) - 2
+        let currentDay = (Calendar.current.component(.weekday, from: delegateVC?.currentDate ?? Date())+5) % 7
         let daysUntilNextDay = tracker.daysUntilNextScheduledDay(currentDay: currentDay)
         guard daysUntilNextDay == 0 else {return}
         checkButton.isSelected.toggle()

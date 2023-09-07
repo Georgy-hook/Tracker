@@ -9,7 +9,12 @@ import UIKit
 
 class CategoryTableView:UITableView{
     // MARK: - Variables
-    private var categories:[String] = ["dfdfsdfdsf","adfdfsdf","fdfsdfsdf","dfdfsdfdsf","adfdfsdf","fdfsdfsdf","dfdfsdfdsf","adfdfsdf","fdfsdfsdf","wdfwfwsdfsfd","wdfsdfsdfsdfds"]
+    private var categories:[String] =  ["Happy moments",
+                                        "Diary",
+                                        "Friends",
+                                        "Holidays",
+                                        "Birthdays",
+                                        "Pets"]
     
     var delegateVC: CategoryViewControllerProtocol?
     
@@ -20,12 +25,16 @@ class CategoryTableView:UITableView{
         self.layer.cornerRadius = 16
         self.backgroundColor = .clear
         self.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        self.tableFooterView = UIView()
         self.showsVerticalScrollIndicator = false
         self.tintColor = .clear
         delegate = self
         dataSource = self
     }
     
+    override func layoutSubviews() {
+        hideLastSeparator()
+    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -34,7 +43,7 @@ class CategoryTableView:UITableView{
 // MARK: - UITableViewDataSource
 extension CategoryTableView:UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        return categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -65,5 +74,13 @@ extension CategoryTableView{
         self.reloadData()
     }
     
-    
+    private func hideLastSeparator(){
+        let lastIndexPath = IndexPath(row: categories.count - 1, section: 0)
+        if let lastCell = cellForRow(at: lastIndexPath) {
+            let separatorFrame = CGRect(x: lastCell.separatorInset.left, y: lastCell.frame.maxY - 1, width: lastCell.frame.width - lastCell.separatorInset.left - lastCell.separatorInset.right, height: 1)
+            let separatorView = UIView(frame: separatorFrame)
+            separatorView.backgroundColor = UIColor(named: "YP White")
+            addSubview(separatorView)
+        }
+    }
 }

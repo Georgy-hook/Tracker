@@ -32,7 +32,7 @@ class ScheduleTableView:UITableView{
 // MARK: - UITableViewDataSource
 extension ScheduleTableView:UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        7
+        return 7
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,8 +64,7 @@ extension ScheduleTableView{
         
         if let cell = sender.superview as? UITableViewCell,
            let indexPath = self.indexPath(for: cell) {
-            
-            let dayOfWeek = weekDays[indexPath.row]
+
             if sender.isOn {
                 if !self.shedule.contains(indexPath.row) {
                     self.shedule.append(indexPath.row)

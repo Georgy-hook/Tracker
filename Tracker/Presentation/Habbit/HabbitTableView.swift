@@ -32,7 +32,7 @@ class HabbitTableView: UITableView {
 
 extension HabbitTableView:UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        return 2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -69,6 +69,7 @@ extension HabbitTableView:UITableViewDelegate{
         default:
             break
         }
+        deselectRow(at: indexPath, animated: true)
     }
 }
 

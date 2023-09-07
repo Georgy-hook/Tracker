@@ -10,9 +10,11 @@ import UIKit
 protocol TrackersViewControllerProtocol{
     func addCompletedTracker(_ tracker: Tracker)
     func removeCompletedTracker(_ tracker: Tracker)
+    var currentDate:Date { get }
 }
 
 final class TrackersViewController: UIViewController {
+    
     //MARK: - UI Elements
     private let searchController: UISearchController = {
         let search = UISearchController(searchResultsController: nil)
@@ -53,14 +55,15 @@ final class TrackersViewController: UIViewController {
     private var trackersCategories:[TrackerCategory] = [] {
         didSet{
             changePlaceholder(trackersCategories.isEmpty)
-            
+            visibleTrackers = trackersCategories
         }
     }
+    private var visibleTrackers:[TrackerCategory] = []
     private let tempStorage = TempStorage.shared
     private let dateFormatter = AppDateFormatter.shared
     private var completedTrackers: [TrackerRecord] = []
     private var completedID: Set<UUID> = []
-    private var currentDate: Date! {
+    var currentDate: Date = Date() {
         didSet {
             filterRelevantTrackers()
         }
@@ -147,8 +150,9 @@ extension TrackersViewController:UISearchResultsUpdating{
             }
             return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
         }
+        visibleTrackers = filteredCategories
         changePlaceholder(filteredCategories.isEmpty)
-        trackersCollectionView.set(cells: filteredCategories)
+        trackersCollectionView.set(cells: visibleTrackers)
     }
 }
 
@@ -169,7 +173,7 @@ extension TrackersViewController:TrackersViewControllerProtocol {
                 }
             }
         }
-        trackersCollectionView.set(cells: trackersCategories)
+        trackersCollectionView.set(cells: visibleTrackers)
         tempStorage.resetTempTracker()
     }
     
@@ -207,8 +211,8 @@ extension TrackersViewController{
             
             return relevantTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: relevantTrackers)
         }
-        
-        trackersCollectionView.set(cells: result)
+        visibleTrackers = result
+        trackersCollectionView.set(cells: visibleTrackers)
     }
     
     private func changePlaceholder(_ isEmpty: Bool) {

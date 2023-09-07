@@ -97,7 +97,7 @@ extension NewCategoryViewController{
         guard let categoryName = categoryName.text else {return}
         let categoryVC = CategoryViewController()
         categoryVC.categories.append(categoryName)
-        present(categoryVC, animated: true)
+        dismiss(animated: true)
     }
 }
 

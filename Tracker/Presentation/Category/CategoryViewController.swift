@@ -48,7 +48,12 @@ final class CategoryViewController: UIViewController {
     }()
     let categoryTableView = CategoryTableView()
     // MARK: - Variables
-    var categories:[String] = ["dfdfsdfdsf","adfdfsdf","fdfsdfsdf","dfdfsdfdsf","adfdfsdf","fdfsdfsdf","dfdfsdfdsf","adfdfsdf","fdfsdfsdf","wdfwfwsdfsfd","wdfsdfsdfsdfds"]
+    var categories:[String] = ["Happy moments",
+                                       "Diary",
+                                       "Friends",
+                                       "Holidays",
+                                       "Birthdays",
+                                       "Pets"]
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()

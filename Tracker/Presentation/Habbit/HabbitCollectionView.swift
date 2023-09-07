@@ -46,9 +46,9 @@ extension HabbitCollectionView:UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section{
         case 0:
-            1
+            return 1
         default:
-            18
+            return 18
         }
         
     }
@@ -126,9 +126,9 @@ extension HabbitCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         switch section{
         case 0:
-            UIEdgeInsets(top: 0, left: 16, bottom: 32, right: 16)
+            return UIEdgeInsets(top: 0, left: 16, bottom: 32, right: 16)
         default:
-            UIEdgeInsets(top: 24, left: params.leftInset, bottom: 24, right: params.rightInset)
+            return UIEdgeInsets(top: 24, left: params.leftInset, bottom: 24, right: params.rightInset)
         }
         
     }
