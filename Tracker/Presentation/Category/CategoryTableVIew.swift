@@ -8,6 +8,7 @@
 import UIKit
 
 class CategoryTableView:UITableView{
+    
     // MARK: - Variables
     private var categories:[String] =  ["Happy moments",
                                         "Diary",

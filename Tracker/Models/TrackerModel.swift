@@ -32,7 +32,7 @@ struct Tracker {
         let nextScheduledDay = schedule.first(where: { $0 >= currentDay }) ?? schedule.first
         if let nextScheduledDay = nextScheduledDay {
             let daysUntilNextDay = nextScheduledDay - currentDay
-            guard daysUntilNextDay >= 0 else {return daysUntilNextDay + 7}
+            guard daysUntilNextDay >= 0 else { return daysUntilNextDay + 7 }
             return daysUntilNextDay
         } else {
             return -1

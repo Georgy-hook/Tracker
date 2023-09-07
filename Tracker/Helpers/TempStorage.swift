@@ -51,20 +51,18 @@ class TempStorage {
     }
     
     func getShedule() -> [Int]?{
-        guard let shedule = tempTracker.schedule else {return nil}
+        guard let shedule = tempTracker.schedule else { return nil }
         return shedule
     }
     
     func getCategory() -> String?{
-        guard let category = tempTracker.category else {return nil}
+        guard let category = tempTracker.category else { return nil }
         
         return category
     }
     
     func buildTracker() -> Tracker? {
-        guard tempTracker.isComplete else {
-            return nil
-        }
+        guard tempTracker.isComplete else { return nil }
 
         return Tracker(
             id: tempTracker.id!,

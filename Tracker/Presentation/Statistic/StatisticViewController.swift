@@ -8,9 +8,6 @@
 import UIKit
 
 final class StatisticViewController: UIViewController {
-    // MARK: - UI Elements
-    
-    // MARK: - Variables
     
     // MARK: - Life Cycle
     override func viewDidLoad() {

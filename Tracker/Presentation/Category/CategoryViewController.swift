@@ -11,6 +11,7 @@ protocol CategoryViewControllerProtocol{
 }
 
 final class CategoryViewController: UIViewController {
+    
     // MARK: - UI Elements
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -47,6 +48,7 @@ final class CategoryViewController: UIViewController {
         return button
     }()
     let categoryTableView = CategoryTableView()
+    
     // MARK: - Variables
     var categories:[String] = ["Happy moments",
                                        "Diary",
@@ -54,6 +56,7 @@ final class CategoryViewController: UIViewController {
                                        "Holidays",
                                        "Birthdays",
                                        "Pets"]
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -129,7 +132,7 @@ extension CategoryViewController{
 
 extension CategoryViewController:CategoryViewControllerProtocol{
     func presentHabbitVC(){
-        guard let presentingViewController = self.presentingViewController as? HabbitViewController else{return}
+        guard let presentingViewController = self.presentingViewController as? HabbitViewController else{ return }
         presentingViewController.shouldUpdateUI()
         dismiss(animated: true)
     }

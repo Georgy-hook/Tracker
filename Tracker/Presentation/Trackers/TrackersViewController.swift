@@ -51,6 +51,7 @@ final class TrackersViewController: UIViewController {
     }()
     
     private let trackersCollectionView = TrackersCollectionView()
+    
     //MARK: - Variables
     private var trackersCategories:[TrackerCategory] = [] {
         didSet{
@@ -143,7 +144,7 @@ extension TrackersViewController{
 //MARK: - SearchController
 extension TrackersViewController:UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
-        guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else{return}
+        guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else{ return }
         let filteredCategories = trackersCategories.compactMap { category in
             let filteredTrackers = category.trackers.filter { tracker in
                 tracker.name.lowercased().hasPrefix(lowercaseSearchText)
@@ -159,7 +160,7 @@ extension TrackersViewController:UISearchResultsUpdating{
 //MARK: - TrackersViewControllerProtocol
 extension TrackersViewController:TrackersViewControllerProtocol {
     func updateTrackers(with track:Tracker){
-        guard let title = tempStorage.getCategory() else {return}
+        guard let title = tempStorage.getCategory() else { return }
         if trackersCategories.isEmpty {
             self.trackersCategories.append(TrackerCategory(title: title, trackers: [track]))
             addCollectionView()

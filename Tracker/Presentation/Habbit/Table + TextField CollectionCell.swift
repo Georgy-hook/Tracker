@@ -7,9 +7,11 @@
 
 import UIKit
 class ListCollectionViewCell:UICollectionViewCell{
+    
     // MARK: - Variables
     static let reuseId = "ListCollectionViewCell"
     var delegateVC: HabbitViewControllerProtocol?
+    
     // MARK: - UI Elements
     private let trackerName: TextFieldWithPadding = {
         let textField = TextFieldWithPadding()

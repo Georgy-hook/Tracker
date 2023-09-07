@@ -11,6 +11,7 @@ final class TrackersCollectionView: UICollectionView {
     // MARK: - Variables
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
     var delegateVC: TrackersViewControllerProtocol?
+    
     // MARK: - Initiliazation
     
     var cells = [TrackerCategory]()

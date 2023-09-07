@@ -8,6 +8,7 @@
 import UIKit
 
 final class NewCategoryViewController: UIViewController {
+    
     // MARK: - UI Elements
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -41,7 +42,6 @@ final class NewCategoryViewController: UIViewController {
         textField.clearButtonMode = .whileEditing
         return textField
     }()
-    // MARK: - Variables
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -94,7 +94,7 @@ extension NewCategoryViewController {
 // MARK: - Actions
 extension NewCategoryViewController{
     @objc private func didAddButtonTapped(){
-        guard let categoryName = categoryName.text else {return}
+        guard let categoryName = categoryName.text else { return }
         let categoryVC = CategoryViewController()
         categoryVC.categories.append(categoryName)
         dismiss(animated: true)

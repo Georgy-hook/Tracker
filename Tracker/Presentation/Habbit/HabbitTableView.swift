@@ -8,10 +8,12 @@
 import UIKit
 
 class HabbitTableView: UITableView {
+    
     // MARK: - Variables
     let cellTexts = ["Категория", "Расписание"]
     var cellDetailTexts = ["",""]
     var delegateVC:HabbitViewControllerProtocol?
+    
     // MARK: - Initiliazation
     init() {
         super.init(frame: .zero, style: .plain)
@@ -75,7 +77,7 @@ extension HabbitTableView:UITableViewDelegate{
 
 extension HabbitTableView{
     func formatWeekdays(_ weekdays: [Int]?) -> String {
-        guard let weekdays = weekdays else {return ""}
+        guard let weekdays = weekdays else { return "" }
         let weekdaysArray = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
         var formattedWeekdays: [String] = []
         

@@ -8,10 +8,12 @@
 import UIKit
 
 class HabbitCollectionViewCell:UICollectionViewCell{
+    
     // MARK: - Variables
     static let reuseId = "HabbitCollectionViewCell"
 
     private let Emojes = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
+    
     // MARK: - UI Elements
     private let textField: UITextField = {
         let textField = UITextField()
@@ -74,7 +76,7 @@ extension HabbitCollectionViewCell{
     func didTapped(on indexPath:IndexPath){
         switch indexPath.section{
         case 1:
-            guard let emoji = textField.text else {return}
+            guard let emoji = textField.text else { return }
             TempStorage.shared.setEmoji(emoji)
         case 2:
             TempStorage.shared.setColor("Color selection \(indexPath.row + 1)")

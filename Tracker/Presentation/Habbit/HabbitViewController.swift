@@ -11,6 +11,7 @@ protocol HabbitViewControllerProtocol{
     func shouldUpdateUI()
 }
 final class HabbitViewController: UIViewController {
+    
     // MARK: - UI Elements
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -115,6 +116,7 @@ extension HabbitViewController {
         ])
     }
 }
+
 // MARK: - HabbitViewControllerProtocol
 extension HabbitViewController:HabbitViewControllerProtocol{
     func presentCategoryVC(){
@@ -128,7 +130,7 @@ extension HabbitViewController:HabbitViewControllerProtocol{
     func shouldUpdateUI(){
         sectionsCollectionView.shouldUpdateTableView()
         
-        guard tempStrotage.buildTracker() != nil else {return}
+        guard tempStrotage.buildTracker() != nil else { return }
         addButton.isUserInteractionEnabled = true
         addButton.backgroundColor = UIColor(named: "YP Black")
     }
@@ -137,7 +139,7 @@ extension HabbitViewController:HabbitViewControllerProtocol{
 // MARK: - Actions
 extension HabbitViewController{
     @objc private func didAddButtonTapped(){
-        guard let tracker = tempStrotage.buildTracker() else {return}
+        guard let tracker = tempStrotage.buildTracker() else { return }
         let tabBarController = TabBarController()
         tabBarController.tracker = tracker
         tabBarController.modalPresentationStyle = .fullScreen

@@ -86,7 +86,7 @@ class TrackersCollectionViewCell: UICollectionViewCell {
 extension TrackersCollectionViewCell {
     
     private func configureUI(){
-        guard let tracker = tracker else {return}
+        guard let tracker = tracker else { return }
         emojiTextField.text = tracker.emoji
         descriptionLabel.text = tracker.name
         cardView.backgroundColor = UIColor(named: tracker.color)
@@ -153,6 +153,7 @@ extension TrackersCollectionViewCell {
         return "\(num) \(suffix)"
     }
 }
+
 // MARK: - Cell's methods
 extension TrackersCollectionViewCell{
     func set(with tracker: Tracker){
@@ -163,10 +164,10 @@ extension TrackersCollectionViewCell{
 // MARK: - Actions
 private extension TrackersCollectionViewCell{
     @objc func checkButtonDidTapped(){
-        guard let tracker = tracker else {return}
+        guard let tracker = tracker else { return }
         let currentDay = (Calendar.current.component(.weekday, from: delegateVC?.currentDate ?? Date())+5) % 7
         let daysUntilNextDay = tracker.daysUntilNextScheduledDay(currentDay: currentDay)
-        guard daysUntilNextDay == 0 else {return}
+        guard daysUntilNextDay == 0 else { return }
         checkButton.isSelected.toggle()
         if checkButton.isSelected{
             checkButton.backgroundColor = UIColor(named: tracker.color)

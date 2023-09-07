@@ -37,7 +37,6 @@ final class ChooseTypeVC: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    // MARK: - Variables
     
     // MARK: - Life Cycle
     override func viewDidLoad() {

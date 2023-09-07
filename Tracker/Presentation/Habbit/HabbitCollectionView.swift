@@ -8,9 +8,11 @@
 import UIKit
 
 final class HabbitCollectionView: UICollectionView {
+    
     // MARK: - Variables
     private let params = GeometricParams(cellCount: 6, leftInset: 19, rightInset: 19, cellSpacing: 5)
     var delegateVC: HabbitViewControllerProtocol?
+
     // MARK: - Initiliazation
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -157,7 +159,7 @@ extension HabbitCollectionView: UICollectionViewDelegateFlowLayout {
 extension HabbitCollectionView{
     func shouldUpdateTableView(){
         let indexPath = IndexPath(item: 0, section: 0)
-        guard let cell = self.cellForItem(at: indexPath) as? ListCollectionViewCell else {return}
+        guard let cell = self.cellForItem(at: indexPath) as? ListCollectionViewCell else { return }
         
         cell.updateTableView()
     }

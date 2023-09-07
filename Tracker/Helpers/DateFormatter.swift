@@ -26,7 +26,7 @@ class AppDateFormatter {
     }()
     
     func dateToString(with date:Date?) -> String{
-        guard let date = date else {return ""}
+        guard let date = date else { return "" }
         return dateFormatterToString.string(from: date)
     }
     
