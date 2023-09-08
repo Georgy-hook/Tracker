@@ -16,9 +16,16 @@ class TrackersCollectionViewCell: UICollectionViewCell {
             configureUI()
         }
     }
+    
+    private var completedDays = 0 {
+        didSet {
+            counterLabel.text = dayToString(completedDays)
+        }
+    }
+    
     var delegateVC: TrackersViewControllerProtocol?
     
-    private let dateLabel: UILabel = {
+    private let counterLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor(named: "YP Black")
@@ -76,7 +83,7 @@ class TrackersCollectionViewCell: UICollectionViewCell {
         self.layer.cornerRadius = 15
         self.clipsToBounds = true
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -87,22 +94,23 @@ extension TrackersCollectionViewCell {
     
     private func configureUI(){
         guard let tracker = tracker else { return }
+        checkButton.isSelected = false
         emojiTextField.text = tracker.emoji
         descriptionLabel.text = tracker.name
         cardView.backgroundColor = UIColor(named: tracker.color)
+        checkButton.backgroundColor = .clear
+        checkButton.setImage(UIImage(named: "ButtonPlus")?.withRenderingMode(.alwaysTemplate), for: .normal)
         checkButton.tintColor = isSelected ? UIColor(named: "YP White"):UIColor(named: tracker.color)
-        let currentDay = Calendar.current.component(.weekday, from: Date()) - 2
-        let daysUntilNextDay = tracker.daysUntilNextScheduledDay(currentDay: currentDay)
-        if daysUntilNextDay >= 0 {
-            dateLabel.text = dayToString(daysUntilNextDay)
-        }
+        counterLabel.text = dayToString(completedDays)
+        isThisDaySelected()
+        
     }
     
     private func addSubviews() {
         addSubview(cardView)
         addSubview(emojiTextField)
         addSubview(descriptionLabel)
-        addSubview(dateLabel)
+        addSubview(counterLabel)
         addSubview(checkButton)
     }
     
@@ -128,9 +136,9 @@ extension TrackersCollectionViewCell {
             checkButton.heightAnchor.constraint(equalToConstant: 34),
             checkButton.widthAnchor.constraint(equalToConstant: 34),
             
-            dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            dateLabel.trailingAnchor.constraint(equalTo: checkButton.leadingAnchor, constant: -8),
-            dateLabel.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16)
+            counterLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            counterLabel.trailingAnchor.constraint(equalTo: checkButton.leadingAnchor, constant: -8),
+            counterLabel.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16)
         ])
     }
     
@@ -165,20 +173,42 @@ extension TrackersCollectionViewCell{
 private extension TrackersCollectionViewCell{
     @objc func checkButtonDidTapped(){
         guard let tracker = tracker else { return }
-        let currentDay = (Calendar.current.component(.weekday, from: delegateVC?.currentDate ?? Date())+5) % 7
-        let daysUntilNextDay = tracker.daysUntilNextScheduledDay(currentDay: currentDay)
-        guard daysUntilNextDay == 0 else { return }
-        checkButton.isSelected.toggle()
-        if checkButton.isSelected{
+        let currentDay = delegateVC?.currentDate ?? Date()
+        guard currentDay <= Date() else { return }
+        
+        if !checkButton.isSelected{
             checkButton.backgroundColor = UIColor(named: tracker.color)
             checkButton.tintColor = UIColor(named: "YP White")
+            completedDays += 1
             
+            checkButton.isSelected.toggle()
             delegateVC?.addCompletedTracker(tracker)
         } else{
             
             checkButton.backgroundColor = .clear
             checkButton.tintColor = UIColor(named: tracker.color)
+            completedDays -= 1
+            
+            checkButton.isSelected.toggle()
             delegateVC?.removeCompletedTracker(tracker)
+        }
+    }
+    
+    func isThisDaySelected(){
+        guard let tracker = tracker else { return }
+        let currentDay = delegateVC?.currentDate ?? Date()
+        let containsRecordWithCurrentDate = delegateVC?.completedTrackers.contains { record in
+            return Calendar.current.isDate(record.date, inSameDayAs: currentDay)
+        } ?? false
+        if containsRecordWithCurrentDate {
+            checkButton.isSelected = true
+            checkButton.backgroundColor = UIColor(named: tracker.color)
+            checkButton.tintColor = UIColor(named: "YP White")
+        }else{
+            checkButton.isSelected = false
+            checkButton.backgroundColor = .clear
+            checkButton.tintColor = UIColor(named: tracker.color)
+            
         }
     }
 }

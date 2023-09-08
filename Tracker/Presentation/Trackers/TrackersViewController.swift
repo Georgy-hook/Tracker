@@ -11,6 +11,7 @@ protocol TrackersViewControllerProtocol{
     func addCompletedTracker(_ tracker: Tracker)
     func removeCompletedTracker(_ tracker: Tracker)
     var currentDate:Date { get }
+    var completedTrackers: [TrackerRecord] {get}
 }
 
 final class TrackersViewController: UIViewController {
@@ -62,8 +63,9 @@ final class TrackersViewController: UIViewController {
     private var visibleTrackers:[TrackerCategory] = []
     private let tempStorage = TempStorage.shared
     private let dateFormatter = AppDateFormatter.shared
-    private var completedTrackers: [TrackerRecord] = []
+    var completedTrackers: [TrackerRecord] = []
     private var completedID: Set<UUID> = []
+    
     var currentDate: Date = Date() {
         didSet {
             filterRelevantTrackers()
@@ -88,6 +90,7 @@ extension TrackersViewController{
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
         changePlaceholder(trackersCategories.isEmpty)
+        currentDate = datePicker.date
         trackersCollectionView.delegateVC = self
     }
     
@@ -179,12 +182,12 @@ extension TrackersViewController:TrackersViewControllerProtocol {
     }
     
     func addCompletedTracker(_ tracker: Tracker) {
-        let newRecord = TrackerRecord(recordID: tracker.id, date: Date())
+        let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
         completedTrackers.append(newRecord)
     }
     
     func removeCompletedTracker(_ tracker: Tracker) {
-        completedTrackers.removeAll { $0.recordID == tracker.id }
+        completedTrackers.removeAll { $0.recordID == tracker.id && Calendar.current.isDate($0.date, inSameDayAs: currentDate) }
     }
     
     private func addCollectionView(){
