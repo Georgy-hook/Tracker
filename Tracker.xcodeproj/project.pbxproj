@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		660EBC052AAE0D9200386C8F /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660EBC042AAE0D9200386C8F /* TrackerStore.swift */; };
+		660EBC072AAE0D9E00386C8F /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660EBC062AAE0D9E00386C8F /* TrackerCategoryStore.swift */; };
+		660EBC092AAE0DA700386C8F /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660EBC082AAE0DA700386C8F /* TrackerRecordStore.swift */; };
 		661B6C132A9BB4F6008BEC08 /* ChooseTypeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C122A9BB4F6008BEC08 /* ChooseTypeVC.swift */; };
 		661B6C152A9BCA9C008BEC08 /* TrackersCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C142A9BCA9C008BEC08 /* TrackersCollectionView.swift */; };
 		661B6C172A9BCC19008BEC08 /* TrackersCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C162A9BCC19008BEC08 /* TrackersCollectionViewCell.swift */; };
@@ -39,6 +42,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		660EBC042AAE0D9200386C8F /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
+		660EBC062AAE0D9E00386C8F /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
+		660EBC082AAE0DA700386C8F /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
 		661B6C122A9BB4F6008BEC08 /* ChooseTypeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseTypeVC.swift; sourceTree = "<group>"; };
 		661B6C142A9BCA9C008BEC08 /* TrackersCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCollectionView.swift; sourceTree = "<group>"; };
 		661B6C162A9BCC19008BEC08 /* TrackersCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -83,6 +89,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		660EBC032AAE0D8100386C8F /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				660EBC042AAE0D9200386C8F /* TrackerStore.swift */,
+				660EBC062AAE0D9E00386C8F /* TrackerCategoryStore.swift */,
+				660EBC082AAE0DA700386C8F /* TrackerRecordStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
 		661B6C182A9BCCF5008BEC08 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -117,6 +133,7 @@
 		661B6C2B2A9CDAEE008BEC08 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				660EBC032AAE0D8100386C8F /* Store */,
 				661B6C2C2A9CDB4F008BEC08 /* GeometricParams.swift */,
 				66E522442A9FAFC200E6BEA2 /* TempStorage.swift */,
 				668AF3842AA7735800D974AD /* DateFormatter.swift */,
@@ -306,6 +323,7 @@
 				66BF239A2A9A5E27000E2474 /* Tracker.xcdatamodeld in Sources */,
 				66AE86122A9E1BB10055E245 /* Table + TextField CollectionCell.swift in Sources */,
 				661B6C132A9BB4F6008BEC08 /* ChooseTypeVC.swift in Sources */,
+				660EBC072AAE0D9E00386C8F /* TrackerCategoryStore.swift in Sources */,
 				66BF23AE2A9B6F88000E2474 /* StatisticViewController.swift in Sources */,
 				661B6C1E2A9BCD83008BEC08 /* TrackerRecordModel.swift in Sources */,
 				66BF23902A9A5E27000E2474 /* AppDelegate.swift in Sources */,
@@ -316,6 +334,7 @@
 				661B6C262A9BED19008BEC08 /* HabbitCollectionView.swift in Sources */,
 				66E5223C2A9E776F00E6BEA2 /* NewCategoryViewController.swift in Sources */,
 				661B6C282A9CB46D008BEC08 /* HabbitCollectionViewCell.swift in Sources */,
+				660EBC052AAE0D9200386C8F /* TrackerStore.swift in Sources */,
 				66BF23A82A9A6FCD000E2474 /* TabBarController.swift in Sources */,
 				661B6C242A9BE794008BEC08 /* TextFieldWithPadding.swift in Sources */,
 				66E522452A9FAFC200E6BEA2 /* TempStorage.swift in Sources */,
@@ -325,6 +344,7 @@
 				661B6C1C2A9BCD32008BEC08 /* TrackerCategoryModel.swift in Sources */,
 				66E522412A9F675D00E6BEA2 /* ScheduleTableView.swift in Sources */,
 				66AE86152A9E3F200055E245 /* CategoryViewController.swift in Sources */,
+				660EBC092AAE0DA700386C8F /* TrackerRecordStore.swift in Sources */,
 				661B6C212A9BE198008BEC08 /* HabbitViewController.swift in Sources */,
 				661B6C1A2A9BCD04008BEC08 /* TrackerModel.swift in Sources */,
 				661B6C172A9BCC19008BEC08 /* TrackersCollectionViewCell.swift in Sources */,

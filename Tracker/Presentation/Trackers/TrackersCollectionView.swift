@@ -12,10 +12,11 @@ final class TrackersCollectionView: UICollectionView {
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
     var delegateVC: TrackersViewControllerProtocol?
     
-    // MARK: - Initiliazation
-    
     var cells = [TrackerCategory]()
     
+    private let trackerStore = TrackerStore()
+    
+    // MARK: - Initiliazation
     init() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
