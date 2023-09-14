@@ -65,6 +65,7 @@ final class TrackersViewController: UIViewController {
     private let dateFormatter = AppDateFormatter.shared
     var completedTrackers: [TrackerRecord] = []
     private var completedID: Set<UUID> = []
+    private let trackerStore = TrackerStore()
     
     var currentDate: Date = Date() {
         didSet {
@@ -89,14 +90,16 @@ extension TrackersViewController{
     private func configureUI(){
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
-        changePlaceholder(trackersCategories.isEmpty)
+        changePlaceholder(trackerStore.isEmpty())
         currentDate = datePicker.date
         trackersCollectionView.delegateVC = self
+        trackersCollectionView.set(cells: trackerStore.trackers)
     }
     
     private func addSubviews(){
         view.addSubview(placeholderImageView)
         view.addSubview(initialLabel)
+        view.addSubview(trackersCollectionView)
     }
     
     private func applyConstraints(){
@@ -107,7 +110,12 @@ extension TrackersViewController{
             placeholderImageView.heightAnchor.constraint(equalToConstant: 80),
             
             initialLabel.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
-            initialLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+            initialLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            
+            trackersCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             
         ])
     }
@@ -156,31 +164,11 @@ extension TrackersViewController:UISearchResultsUpdating{
         }
         visibleTrackers = filteredCategories
         changePlaceholder(filteredCategories.isEmpty)
-        trackersCollectionView.set(cells: visibleTrackers)
     }
 }
 
 //MARK: - TrackersViewControllerProtocol
-extension TrackersViewController:TrackersViewControllerProtocol {
-    func updateTrackers(with track:Tracker){
-        guard let title = tempStorage.getCategory() else { return }
-        if trackersCategories.isEmpty {
-            self.trackersCategories.append(TrackerCategory(title: title, trackers: [track]))
-            addCollectionView()
-        }
-        else{
-            for tracker in self.trackersCategories {
-                if tracker.title == tempStorage.getCategory(){
-                    tracker.addedNewTracker(track)
-                }else{
-                    self.trackersCategories.append(TrackerCategory(title: title, trackers: [track]))
-                }
-            }
-        }
-        trackersCollectionView.set(cells: visibleTrackers)
-        tempStorage.resetTempTracker()
-    }
-    
+extension TrackersViewController:TrackersViewControllerProtocol {    
     func addCompletedTracker(_ tracker: Tracker) {
         let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
         completedTrackers.append(newRecord)
@@ -188,18 +176,6 @@ extension TrackersViewController:TrackersViewControllerProtocol {
     
     func removeCompletedTracker(_ tracker: Tracker) {
         completedTrackers.removeAll { $0.recordID == tracker.id && Calendar.current.isDate($0.date, inSameDayAs: currentDate) }
-    }
-    
-    private func addCollectionView(){
-        
-        view.addSubview(trackersCollectionView)
-        
-        NSLayoutConstraint.activate([
-            trackersCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ])
     }
 }
 
@@ -216,7 +192,6 @@ extension TrackersViewController{
             return relevantTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: relevantTrackers)
         }
         visibleTrackers = result
-        trackersCollectionView.set(cells: visibleTrackers)
     }
     
     private func changePlaceholder(_ isEmpty: Bool) {

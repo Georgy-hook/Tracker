@@ -38,7 +38,6 @@ final class TabBarController: UITabBarController {
         
         let trackersViewController = TrackersViewController()
         let nav = UINavigationController(rootViewController: trackersViewController)
-        if let tracker = tracker{trackersViewController.updateTrackers(with: tracker)}
         
         trackersViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",

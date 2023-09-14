@@ -43,6 +43,9 @@ final class NewCategoryViewController: UIViewController {
         return textField
     }()
     
+    // MARK: - Variables
+    let trackerCategoryStore = TrackerCategoryStore()
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,9 +97,14 @@ extension NewCategoryViewController {
 // MARK: - Actions
 extension NewCategoryViewController{
     @objc private func didAddButtonTapped(){
+        guard let categoryVC = presentingViewController as? CategoryViewController else {return}
         guard let categoryName = categoryName.text else { return }
-        let categoryVC = CategoryViewController()
-        categoryVC.categories.append(categoryName)
+        do{
+           try trackerCategoryStore.createCategory(withTitle: categoryName)
+        }
+        catch{
+            print(error)
+        }
         dismiss(animated: true)
     }
 }

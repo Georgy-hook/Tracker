@@ -5,11 +5,13 @@
 //  Created by Georgy on 27.08.2023.
 //
 import UIKit
+
 protocol HabbitViewControllerProtocol{
     func presentCategoryVC()
     func presentSheduleVC()
     func shouldUpdateUI()
 }
+
 final class HabbitViewController: UIViewController {
     
     // MARK: - UI Elements
@@ -58,6 +60,7 @@ final class HabbitViewController: UIViewController {
     
     // MARK: - Variables
     let tempStrotage = TempStorage.shared
+    let trackerCategoryStore = TrackerCategoryStore()
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -69,8 +72,6 @@ final class HabbitViewController: UIViewController {
         
         sectionsCollectionView.delegateVC = self
         tempStrotage.setID(UUID())
-        
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -140,8 +141,10 @@ extension HabbitViewController:HabbitViewControllerProtocol{
 extension HabbitViewController{
     @objc private func didAddButtonTapped(){
         guard let tracker = tempStrotage.buildTracker() else { return }
+        guard let title = tempStrotage.getCategory() else { return }
+    
+        trackerCategoryStore.addTracker(tracker, toCategoryWithTitle: title)
         let tabBarController = TabBarController()
-        tabBarController.tracker = tracker
         tabBarController.modalPresentationStyle = .fullScreen
         present(tabBarController, animated: true)
     }

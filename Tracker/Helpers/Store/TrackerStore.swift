@@ -14,6 +14,7 @@ enum TrackerStoreError: Error{
     case decodingErrorInvalidColor
     case decodingErrorInvalidEmoji
     case decodingErrorInvalidShedule
+    case decodingErrorInvalidCategory
 }
 
 struct TrackerStoreUpdate {
@@ -75,17 +76,18 @@ final class TrackerStore: NSObject{
         try controller.performFetch()
     }
     
-    var trackers: [Tracker] {
+    var trackers: [TrackerCategory] {
         guard let objects = self.fetchedResultsController?.fetchedObjects,
-              let trackers = try? objects.map({try self.makeTracker(from: $0)})
-        else {return []}
+              let trackers = try? makeCategory(from: objects)
+        else { return [] }
         return trackers
     }
     
-    func addNewTracker(_ tracker:Tracker) throws{
+    func addNewTracker(_ tracker:Tracker) throws -> TrackerCoreData{
         let trackerCoreData = TrackerCoreData(context: context)
         updateTracker(trackerCoreData, with: tracker)
         try context.save()
+        return trackerCoreData
     }
     
     func updateTracker(_ trackerCoreData:TrackerCoreData, with tracker:Tracker){
@@ -93,7 +95,7 @@ final class TrackerStore: NSObject{
         trackerCoreData.name = tracker.name
         trackerCoreData.color = tracker.color
         trackerCoreData.emoji = tracker.emoji
-        trackerCoreData.shedule = tracker.schedule as NSObject
+        trackerCoreData.schedule = tracker.schedule as NSObject
         
     }
     
@@ -110,7 +112,7 @@ final class TrackerStore: NSObject{
         guard let emoji = trackerCoreData.emoji else {
             throw TrackerStoreError.decodingErrorInvalidEmoji
         }
-        guard let shedule = trackerCoreData.shedule as? [Int] else {
+        guard let shedule = trackerCoreData.schedule as? [Int] else {
             throw TrackerStoreError.decodingErrorInvalidShedule
         }
         
@@ -119,6 +121,39 @@ final class TrackerStore: NSObject{
                        color: color,
                        emoji: emoji,
                        schedule: shedule))
+    }
+    
+    func makeCategory(from trackerCoreDataObjects: [TrackerCoreData]) throws -> [TrackerCategory] {
+        var trackerCategoryDict = [String: [Tracker]]()
+        
+        for trackerCoreData in trackerCoreDataObjects {
+            do {
+                let tracker = try makeTracker(from: trackerCoreData)
+                if let categoryTitle = trackerCoreData.category?.title {
+                    if var trackersForCategory = trackerCategoryDict[categoryTitle] {
+                        trackersForCategory.append(tracker)
+                        trackerCategoryDict[categoryTitle] = trackersForCategory
+                    } else {
+                        trackerCategoryDict[categoryTitle] = [tracker]
+                    }
+                }
+            } catch {
+                throw TrackerStoreError.decodingErrorInvalidCategory
+            }
+        }
+
+        let trackerCategories = trackerCategoryDict.map { (title, trackers) in
+            return TrackerCategory(title: title, trackers: trackers)
+        }
+        
+        return trackerCategories
+    }
+    
+    func isEmpty() -> Bool {
+        guard let objects = self.fetchedResultsController?.fetchedObjects else {
+            return true
+        }
+        return objects.isEmpty
     }
 }
 
@@ -172,3 +207,4 @@ extension TrackerStore:NSFetchedResultsControllerDelegate{
         }
     }
 }
+

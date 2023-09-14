@@ -50,21 +50,25 @@ final class CategoryViewController: UIViewController {
     let categoryTableView = CategoryTableView()
     
     // MARK: - Variables
-    var categories:[String] = ["Happy moments",
-                                       "Diary",
-                                       "Friends",
-                                       "Holidays",
-                                       "Birthdays",
-                                       "Pets"]
+    var categories:[String] = []{
+        didSet{
+            guard !categories.isEmpty else{return}
+            starImageView.isHidden = true
+            initialLabel.isHidden = true
+            categoryTableView.set(with: categories)
+        }
+    }
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         categoryTableView.delegateVC = self
+        categories = trackerCategoryStore.trackersCategories.map{$0.title}
+        trackerCategoryStore.delegate = categoryTableView
         configureUI()
         addSubviews()
         applyConstraints()
-        categoryTableView.set(with: categories)
     }
 }
 
@@ -72,19 +76,11 @@ final class CategoryViewController: UIViewController {
 extension CategoryViewController {
     private func configureUI() {
         view.backgroundColor = UIColor(named: "YP White")
-        
-        if categories.count == 0{
-            
-        }else{
-            starImageView.isHidden = true
-            initialLabel.isHidden = true
-        }
-        
         addButton.addTarget(self, action: #selector(didAddButtonTapped), for: .touchUpInside)
     }
     
     private func addSubviews() {
-       
+        
         view.addSubview(starImageView)
         view.addSubview(initialLabel)
         view.addSubview(addButton)
@@ -108,7 +104,7 @@ extension CategoryViewController {
             initialLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             initialLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
-
+            
             addButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             addButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
@@ -117,8 +113,7 @@ extension CategoryViewController {
             categoryTableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 87),
             categoryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             categoryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            categoryTableView.bottomAnchor.constraint(lessThanOrEqualTo: addButton.topAnchor),
-            categoryTableView.heightAnchor.constraint(equalToConstant: CGFloat(categories.count * 75))
+            categoryTableView.bottomAnchor.constraint(lessThanOrEqualTo: addButton.topAnchor)
         ])
     }
 }
@@ -137,3 +132,4 @@ extension CategoryViewController:CategoryViewControllerProtocol{
         dismiss(animated: true)
     }
 }
+

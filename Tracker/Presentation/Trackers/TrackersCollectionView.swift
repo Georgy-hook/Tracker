@@ -32,10 +32,13 @@ final class TrackersCollectionView: UICollectionView {
         translatesAutoresizingMaskIntoConstraints = false
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
+        
+        trackerStore.delegate = self
     }
     
     func set(cells: [TrackerCategory]) {
         self.cells = cells
+        print(cells)
         self.reloadData()
     }
     
@@ -78,11 +81,9 @@ extension TrackersCollectionView: UICollectionViewDelegate{
         }
         
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SupplementaryView
-        
-
+    
             view.titleLabel.text = cells[indexPath.section].title
         
-     
         return view
     }
 }
@@ -118,4 +119,25 @@ extension TrackersCollectionView:UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat{
         return 6
     }
+}
+
+extension TrackersCollectionView: TrackerStoreDelegate{
+    func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
+        cells = store.trackers
+        self.reloadData()
+//        self.performBatchUpdates {
+//            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(item: $0, section: 0) }
+//            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(item: $0, section: 0) }
+//            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(item: $0, section: 0) }
+//            self.insertItems(at: insertedIndexPaths)
+//            self.insertItems(at: deletedIndexPaths)
+//            self.insertItems(at: updatedIndexPaths)
+//            for move in update.movedIndexes {
+//                self.moveItem(
+//                    at: IndexPath(item: move.oldIndex, section: 0),
+//                    to: IndexPath(item: move.newIndex, section: 0)
+//                )
+//            }
+//        }
+   }
 }

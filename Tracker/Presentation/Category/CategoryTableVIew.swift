@@ -10,14 +10,10 @@ import UIKit
 class CategoryTableView:UITableView{
     
     // MARK: - Variables
-    private var categories:[String] =  ["Happy moments",
-                                        "Diary",
-                                        "Friends",
-                                        "Holidays",
-                                        "Birthdays",
-                                        "Pets"]
+    private var categories:[String] =  []
     
     var delegateVC: CategoryViewControllerProtocol?
+    private let trackerCategoryStore = TrackerCategoryStore()
     
     // MARK: - Initiliazation
     init() {
@@ -36,9 +32,14 @@ class CategoryTableView:UITableView{
     override func layoutSubviews() {
         hideLastSeparator()
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override var intrinsicContentSize: CGSize {
+        return  CGSize(width: 0, height: categories.count * 75)
+     }
 }
 
 // MARK: - UITableViewDataSource
@@ -53,7 +54,6 @@ extension CategoryTableView:UITableViewDataSource{
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.textColor = UIColor(named: "YP Black")
         cell.textLabel?.text = categories[indexPath.row]
-        //cell.accessoryType = .none
         return cell
     }
 }
@@ -72,6 +72,7 @@ extension CategoryTableView:UITableViewDelegate{
 extension CategoryTableView{
     func set(with categories:[String]){
         self.categories = categories
+        print(categories)
         self.reloadData()
     }
     
@@ -82,6 +83,32 @@ extension CategoryTableView{
             let separatorView = UIView(frame: separatorFrame)
             separatorView.backgroundColor = UIColor(named: "YP White")
             addSubview(separatorView)
+        }
+    }
+}
+
+extension CategoryTableView:TrackerCategoryStoreDelegate{
+    
+    func updateTableViewHeight() {
+        invalidateIntrinsicContentSize()
+    }
+    
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+        categories = trackerCategoryStore.trackersCategories.map { $0.title }
+        updateTableViewHeight()
+        self.performBatchUpdates {
+            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(row: $0, section: 0) }
+            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(row: $0, section: 0) }
+            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(row: $0, section: 0) }
+            self.insertRows(at: insertedIndexPaths, with: .automatic)
+            self.insertRows(at: insertedIndexPaths, with: .automatic)
+            self.insertRows(at: insertedIndexPaths, with: .automatic)
+            for move in update.movedIndexes {
+                self.moveRow(
+                    at: IndexPath(item: move.oldIndex, section: 0),
+                    to: IndexPath(item: move.newIndex, section: 0)
+                )
+            }
         }
     }
 }
