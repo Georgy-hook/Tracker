@@ -72,6 +72,7 @@ class TempStorage {
             schedule: tempTracker.schedule!
         )
     }
+    
     func resetTempTracker() {
         tempTracker = TempTracker()
     }

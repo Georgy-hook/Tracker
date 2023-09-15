@@ -10,10 +10,14 @@ import UIKit
 class HabbitTableView: UITableView {
     
     // MARK: - Variables
-    let cellTexts = ["Категория", "Расписание"]
-    var cellDetailTexts = ["",""]
-    var delegateVC:HabbitViewControllerProtocol?
-    
+    private let cellTexts = ["Категория", "Расписание"]
+    private var cellDetailTexts = ["",""]
+    var delegateVC:HabbitViewControllerProtocol? {
+        didSet{
+            if delegateVC?.isIrregular ?? false { numbersOfRows = 1 }
+        }
+    }
+    private var numbersOfRows = 2
     // MARK: - Initiliazation
     init() {
         super.init(frame: .zero, style: .plain)
@@ -30,11 +34,15 @@ class HabbitTableView: UITableView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override var intrinsicContentSize: CGSize {
+        return  CGSize(width: 0, height: 75 * numbersOfRows - 1)
+     }
 }
 
 extension HabbitTableView:UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return numbersOfRows
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,6 +66,7 @@ extension HabbitTableView:UITableViewDataSource{
 }
 
 extension HabbitTableView:UITableViewDelegate{
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }

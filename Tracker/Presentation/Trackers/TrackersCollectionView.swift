@@ -14,8 +14,6 @@ final class TrackersCollectionView: UICollectionView {
     
     var cells = [TrackerCategory]()
     
-    private let trackerStore = TrackerStore()
-    
     // MARK: - Initiliazation
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -32,8 +30,7 @@ final class TrackersCollectionView: UICollectionView {
         translatesAutoresizingMaskIntoConstraints = false
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
-        
-        trackerStore.delegate = self
+
     }
     
     func set(cells: [TrackerCategory]) {

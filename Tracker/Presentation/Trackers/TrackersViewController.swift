@@ -91,6 +91,7 @@ extension TrackersViewController{
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
         changePlaceholder(trackerStore.isEmpty())
+        trackerStore.delegate = trackersCollectionView
         currentDate = datePicker.date
         trackersCollectionView.delegateVC = self
         trackersCollectionView.set(cells: trackerStore.trackers)
@@ -168,7 +169,7 @@ extension TrackersViewController:UISearchResultsUpdating{
 }
 
 //MARK: - TrackersViewControllerProtocol
-extension TrackersViewController:TrackersViewControllerProtocol {    
+extension TrackersViewController:TrackersViewControllerProtocol {
     func addCompletedTracker(_ tracker: Tracker) {
         let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
         completedTrackers.append(newRecord)

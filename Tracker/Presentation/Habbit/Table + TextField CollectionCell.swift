@@ -67,7 +67,7 @@ extension ListCollectionViewCell{
             habbitTableView.topAnchor.constraint(equalTo: trackerName.bottomAnchor, constant: 24),
             habbitTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             habbitTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            habbitTableView.heightAnchor.constraint(equalToConstant: 149)
+            //habbitTableView.heightAnchor.constraint(equalToConstant: 149)
         ])
     }
 }

@@ -142,7 +142,11 @@ extension HabbitCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch indexPath.section{
         case 0:
-            return CGSize(width: collectionView.frame.width - 32, height: 250)
+            let availableWidth = collectionView.frame.width - 32
+            guard delegateVC?.isIrregular ?? false else {
+                return CGSize(width: availableWidth , height: 250)
+            }
+            return CGSize(width: availableWidth , height: 175)
         default:
             let availableWidth = collectionView.frame.width - params.paddingWidth
             let cellWidth =  availableWidth / CGFloat(params.cellCount)

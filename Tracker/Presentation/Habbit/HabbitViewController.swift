@@ -10,12 +10,13 @@ protocol HabbitViewControllerProtocol{
     func presentCategoryVC()
     func presentSheduleVC()
     func shouldUpdateUI()
+    var isIrregular:Bool {get}
 }
 
 final class HabbitViewController: UIViewController {
     
     // MARK: - UI Elements
-    let titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Новая привычка"
         label.textColor = UIColor(named: "YP Black")
@@ -23,7 +24,7 @@ final class HabbitViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    let stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 8
@@ -32,7 +33,7 @@ final class HabbitViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-    let addButton: UIButton = {
+    private let addButton: UIButton = {
         let button = UIButton()
         button.setTitle("Создать", for: .normal)
         button.setTitleColor(UIColor(named: "YP White"), for: .normal)
@@ -44,7 +45,7 @@ final class HabbitViewController: UIViewController {
         return button
     }()
     
-    let cancelButton: UIButton = {
+    private let cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("Отменить", for: .normal)
         button.setTitleColor(UIColor(named: "YP Red"), for: .normal)
@@ -59,9 +60,15 @@ final class HabbitViewController: UIViewController {
     let sectionsCollectionView = HabbitCollectionView()
     
     // MARK: - Variables
-    let tempStrotage = TempStorage.shared
-    let trackerCategoryStore = TrackerCategoryStore()
-    
+    private let tempStorage = TempStorage.shared
+    private let trackerCategoryStore = TrackerCategoryStore()
+    var isIrregular = false {
+        didSet{
+            if isIrregular{
+                tempStorage.setSchedule([0,1,2,3,4,5,6])
+            }
+        }
+    }
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +78,7 @@ final class HabbitViewController: UIViewController {
         applyConstraints()
         
         sectionsCollectionView.delegateVC = self
-        tempStrotage.setID(UUID())
+        tempStorage.setID(UUID())
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -131,7 +138,7 @@ extension HabbitViewController:HabbitViewControllerProtocol{
     func shouldUpdateUI(){
         sectionsCollectionView.shouldUpdateTableView()
         
-        guard tempStrotage.buildTracker() != nil else { return }
+        guard tempStorage.buildTracker() != nil else { return }
         addButton.isUserInteractionEnabled = true
         addButton.backgroundColor = UIColor(named: "YP Black")
     }
@@ -140,8 +147,8 @@ extension HabbitViewController:HabbitViewControllerProtocol{
 // MARK: - Actions
 extension HabbitViewController{
     @objc private func didAddButtonTapped(){
-        guard let tracker = tempStrotage.buildTracker() else { return }
-        guard let title = tempStrotage.getCategory() else { return }
+        guard let tracker = tempStorage.buildTracker() else { return }
+        guard let title = tempStorage.getCategory() else { return }
     
         trackerCategoryStore.addTracker(tracker, toCategoryWithTitle: title)
         let tabBarController = TabBarController()
@@ -150,6 +157,8 @@ extension HabbitViewController{
     }
     
     @objc private func didCancelButtonTapped(){
-        dismiss(animated: true)
+        let tabBarController = TabBarController()
+        tabBarController.modalPresentationStyle = .fullScreen
+        present(tabBarController, animated: true)
     }
 }
