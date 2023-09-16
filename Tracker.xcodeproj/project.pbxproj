@@ -95,6 +95,7 @@
 				660EBC042AAE0D9200386C8F /* TrackerStore.swift */,
 				660EBC062AAE0D9E00386C8F /* TrackerCategoryStore.swift */,
 				660EBC082AAE0DA700386C8F /* TrackerRecordStore.swift */,
+				66E522442A9FAFC200E6BEA2 /* TempStorage.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -135,7 +136,6 @@
 			children = (
 				660EBC032AAE0D8100386C8F /* Store */,
 				661B6C2C2A9CDB4F008BEC08 /* GeometricParams.swift */,
-				66E522442A9FAFC200E6BEA2 /* TempStorage.swift */,
 				668AF3842AA7735800D974AD /* DateFormatter.swift */,
 			);
 			path = Helpers;

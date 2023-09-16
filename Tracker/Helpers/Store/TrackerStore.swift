@@ -13,7 +13,6 @@ enum TrackerStoreError: Error{
     case decodingErrorInvalidName
     case decodingErrorInvalidColor
     case decodingErrorInvalidEmoji
-    case decodingErrorInvalidShedule
     case decodingErrorInvalidCategory
 }
 
@@ -58,22 +57,7 @@ final class TrackerStore: NSObject{
         self.context = context
         super.init()
         
-        let fetchRequest = TrackerCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)
-        ]
-        let controller = NSFetchedResultsController(
-            fetchRequest: fetchRequest,
-            managedObjectContext: context,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
-        
-        controller.delegate = self
-        
-        self.fetchedResultsController = controller
-        
-        try controller.performFetch()
+        try makeFetchRequest(with: nil)
     }
     
     var trackers: [TrackerCategory] {
@@ -90,14 +74,20 @@ final class TrackerStore: NSObject{
         return trackerCoreData
     }
     
-    func updateTracker(_ trackerCoreData:TrackerCoreData, with tracker:Tracker){
+    func updateTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
         trackerCoreData.id = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.color = tracker.color
         trackerCoreData.emoji = tracker.emoji
-        trackerCoreData.schedule = tracker.schedule as NSObject
         
+        let newSchedules = tracker.schedule.map { dayOfWeek in
+            let schedule = ScheduleCoreData(context: context)
+            schedule.dayOfWeek = Int32(dayOfWeek)
+            return schedule
+        }
+        trackerCoreData.addToSchedule(NSSet(array: newSchedules))
     }
+    
     
     func makeTracker(from trackerCoreData: TrackerCoreData) throws -> Tracker{
         guard let id = trackerCoreData.id else {
@@ -112,15 +102,19 @@ final class TrackerStore: NSObject{
         guard let emoji = trackerCoreData.emoji else {
             throw TrackerStoreError.decodingErrorInvalidEmoji
         }
-        guard let shedule = trackerCoreData.schedule as? [Int] else {
-            throw TrackerStoreError.decodingErrorInvalidShedule
-        }
+        
+        let schedule = makeSchedule(from:trackerCoreData.schedule?.allObjects as? [ScheduleCoreData])
         
         return(Tracker(id: id,
                        name: name,
                        color: color,
                        emoji: emoji,
-                       schedule: shedule))
+                       schedule: schedule))
+    }
+    
+    func makeSchedule(from scheduleCoreData: [ScheduleCoreData]?) -> [Int]{
+        guard let scheduleCoreData = scheduleCoreData else {return []}
+        return scheduleCoreData.map{Int($0.dayOfWeek)}
     }
     
     func makeCategory(from trackerCoreDataObjects: [TrackerCoreData]) throws -> [TrackerCategory] {
@@ -141,11 +135,10 @@ final class TrackerStore: NSObject{
                 throw TrackerStoreError.decodingErrorInvalidCategory
             }
         }
-
+        
         let trackerCategories = trackerCategoryDict.map { (title, trackers) in
             return TrackerCategory(title: title, trackers: trackers)
         }
-        
         return trackerCategories
     }
     
@@ -157,6 +150,7 @@ final class TrackerStore: NSObject{
     }
 }
 
+// MARK: - NSFetchedResultsControllerDelegate
 extension TrackerStore:NSFetchedResultsControllerDelegate{
     
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -165,7 +159,7 @@ extension TrackerStore:NSFetchedResultsControllerDelegate{
         updatedIndexes = IndexSet()
         movedIndexes = Set<TrackerStoreUpdate.Move>()
     }
-
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.store(
             self,
@@ -208,3 +202,46 @@ extension TrackerStore:NSFetchedResultsControllerDelegate{
     }
 }
 
+// MARK: - Search methods
+extension TrackerStore{
+    func fetchRelevantTrackers(forDay day: Int) throws {
+        let predicate = NSPredicate(format: " %K CONTAINS %d", #keyPath(TrackerCoreData.schedule.dayOfWeek), day)
+        try makeFetchRequest(with: predicate)
+    }
+    
+    
+    func searchTrackers(with searchText: String, forDay day: Int) throws  {
+        guard !searchText.isEmpty else {
+            try fetchRelevantTrackers(forDay: day)
+            return
+        }
+        
+        let predicate = NSPredicate(format: "%K CONTAINS[c] %@ AND %K CONTAINS %d ",
+                                    #keyPath(TrackerCoreData.name), searchText,
+                                    #keyPath(TrackerCoreData.schedule.dayOfWeek), day)
+        try makeFetchRequest(with: predicate)
+    }
+    
+    private func makeFetchRequest(with predicate:NSPredicate?) throws{
+        
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)
+        ]
+        
+        if let predicate = predicate{
+            fetchRequest.predicate = predicate
+        }
+        
+        let controller = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        
+        self.fetchedResultsController = controller
+        
+        try controller.performFetch()
+    }
+}

@@ -156,15 +156,16 @@ extension TrackersViewController{
 //MARK: - SearchController
 extension TrackersViewController:UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
-        guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else{ return }
-        let filteredCategories = trackersCategories.compactMap { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                tracker.name.lowercased().hasPrefix(lowercaseSearchText)
-            }
-            return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
+        guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else { return }
+        
+        let currentDay = dateFormatter.dayOfWeekInt(for: currentDate)
+        
+        do {
+            try trackerStore.searchTrackers(with: lowercaseSearchText, forDay: currentDay)
+            trackersCollectionView.set(cells: trackerStore.trackers)
+        } catch {
+            print("Error searching for trackers: \(error)")
         }
-        visibleTrackers = filteredCategories
-        changePlaceholder(filteredCategories.isEmpty)
     }
 }
 
@@ -183,17 +184,18 @@ extension TrackersViewController:TrackersViewControllerProtocol {
 //MARK: - Filter methods
 extension TrackersViewController{
     private func filterRelevantTrackers() {
-        let currentDay = dateFormatter.dateToDays(with: currentDate)
+        let currentDay = dateFormatter.dayOfWeekInt(for: currentDate)
         
-        let result = trackersCategories.compactMap { category in
-            let relevantTrackers = category.trackers.filter { tracker in
-                tracker.getDays().contains(currentDay)
-            }
-            
-            return relevantTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: relevantTrackers)
+        do {
+            try trackerStore.fetchRelevantTrackers(forDay: currentDay)
+            trackersCollectionView.set(cells: trackerStore.trackers)
         }
-        visibleTrackers = result
+        catch {
+           print(error)
+        }
+       
     }
+
     
     private func changePlaceholder(_ isEmpty: Bool) {
         placeholderImageView.image = UIImage(named: trackersCategories.isEmpty ? "RoundStar" : "NotFound")

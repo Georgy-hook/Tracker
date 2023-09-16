@@ -35,7 +35,6 @@ final class TrackersCollectionView: UICollectionView {
     
     func set(cells: [TrackerCategory]) {
         self.cells = cells
-        print(cells)
         self.reloadData()
     }
     

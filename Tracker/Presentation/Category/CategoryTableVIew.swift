@@ -72,7 +72,6 @@ extension CategoryTableView:UITableViewDelegate{
 extension CategoryTableView{
     func set(with categories:[String]){
         self.categories = categories
-        print(categories)
         self.reloadData()
     }
     
