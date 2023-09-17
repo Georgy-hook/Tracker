@@ -27,7 +27,7 @@ final class HabbitCollectionView: UICollectionView {
         
         backgroundColor = .clear
         translatesAutoresizingMaskIntoConstraints = false
-        //TODO: allowsMultipleSelection = true пока непонятно как взять по одному из каждой секции
+        allowsMultipleSelection = true
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
     }
@@ -98,7 +98,15 @@ extension HabbitCollectionView:UICollectionViewDelegate{
         view.titleLabel.text = titleLabel
         return view
     }
-    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+       
+        collectionView.indexPathsForSelectedItems?.filter({ $0.section == indexPath.section }).forEach({
+            collectionView.deselectItem(at: $0, animated: false)
+            let cell = cellForItem(at: $0) as? HabbitCollectionViewCell
+            cell?.isDeselected(for: $0)
+        })
+         return true
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = cellForItem(at: indexPath) as? HabbitCollectionViewCell
         cell?.isSelected(for: indexPath)
