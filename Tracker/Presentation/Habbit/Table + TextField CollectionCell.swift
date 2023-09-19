@@ -10,7 +10,7 @@ class ListCollectionViewCell:UICollectionViewCell{
     
     // MARK: - Variables
     static let reuseId = "ListCollectionViewCell"
-    var delegateVC: HabbitViewControllerProtocol?
+    weak var delegateVC: HabbitViewControllerProtocol?
     
     // MARK: - UI Elements
     private let trackerName: TextFieldWithPadding = {
@@ -74,7 +74,7 @@ extension ListCollectionViewCell{
 
 extension ListCollectionViewCell:UITextFieldDelegate{
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let name = textField.text, name != ""  else {
+        guard let name = textField.text else {
             return
         }
         TempStorage.shared.setName(name)

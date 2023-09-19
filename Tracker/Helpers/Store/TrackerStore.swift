@@ -45,6 +45,13 @@ final class TrackerStore: NSObject{
     private var updatedIndexes: IndexSet?
     private var movedIndexes: Set<TrackerStoreUpdate.Move>?
     
+    var trackers: [TrackerCategory] {
+        guard let objects = self.fetchedResultsController?.fetchedObjects,
+              let trackers = try? makeCategory(from: objects)
+        else { return [] }
+        return trackers
+    }
+    
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do { try self.init(context: context) }
@@ -60,12 +67,7 @@ final class TrackerStore: NSObject{
         try makeFetchRequest(with: nil)
     }
     
-    var trackers: [TrackerCategory] {
-        guard let objects = self.fetchedResultsController?.fetchedObjects,
-              let trackers = try? makeCategory(from: objects)
-        else { return [] }
-        return trackers
-    }
+  
     
     func addNewTracker(_ tracker:Tracker) throws -> TrackerCoreData{
         let trackerCoreData = TrackerCoreData(context: context)

@@ -6,7 +6,7 @@
 //
 import UIKit
 
-protocol HabbitViewControllerProtocol{
+protocol HabbitViewControllerProtocol: AnyObject{
     func presentCategoryVC()
     func presentSheduleVC()
     func shouldUpdateUI()
@@ -66,6 +66,7 @@ final class HabbitViewController: UIViewController {
         didSet{
             if isIrregular{
                 tempStorage.setSchedule([0,1,2,3,4,5,6])
+                titleLabel.text = "Новое нерегулярное событие"
             }
         }
     }
@@ -138,7 +139,11 @@ extension HabbitViewController:HabbitViewControllerProtocol{
     func shouldUpdateUI(){
         sectionsCollectionView.shouldUpdateTableView()
         
-        guard tempStorage.buildTracker() != nil else { return }
+        guard tempStorage.buildTracker() != nil else {
+            addButton.isUserInteractionEnabled = false
+            addButton.backgroundColor = UIColor(named: "YP Gray")
+            return
+        }
         addButton.isUserInteractionEnabled = true
         addButton.backgroundColor = UIColor(named: "YP Black")
     }

@@ -6,7 +6,7 @@
 //
 import UIKit
 
-protocol CategoryViewControllerProtocol{
+protocol CategoryViewControllerProtocol:AnyObject{
     func presentHabbitVC()
 }
 
@@ -52,9 +52,7 @@ final class CategoryViewController: UIViewController {
     // MARK: - Variables
     var categories:[String] = []{
         didSet{
-            guard !categories.isEmpty else{return}
-            starImageView.isHidden = true
-            initialLabel.isHidden = true
+            checkPlaceholder()
             categoryTableView.set(with: categories)
         }
     }
@@ -133,3 +131,10 @@ extension CategoryViewController:CategoryViewControllerProtocol{
     }
 }
 
+extension CategoryViewController{
+    func checkPlaceholder(){
+        guard !trackerCategoryStore.isEmpty() else { return }
+        starImageView.isHidden = true
+        initialLabel.isHidden = true
+    }
+}

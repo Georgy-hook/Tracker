@@ -12,7 +12,7 @@ class CategoryTableView:UITableView{
     // MARK: - Variables
     private var categories:[String] =  []
     
-    var delegateVC: CategoryViewControllerProtocol?
+    weak var delegateVC: CategoryViewControllerProtocol?
     private let trackerCategoryStore = TrackerCategoryStore()
     
     // MARK: - Initiliazation

@@ -12,7 +12,7 @@ class HabbitTableView: UITableView {
     // MARK: - Variables
     private let cellTexts = ["Категория", "Расписание"]
     private var cellDetailTexts = ["",""]
-    var delegateVC:HabbitViewControllerProtocol? {
+    weak var delegateVC:HabbitViewControllerProtocol? {
         didSet{
             if delegateVC?.isIrregular ?? false { numbersOfRows = 1 }
         }

@@ -138,7 +138,13 @@ final class TrackerCategoryStore: NSObject{
         
         return TrackerCategory(title: title, trackers: trackers)
     }
-
+    
+    func isEmpty() -> Bool {
+        guard let objects = self.fetchedResultsController?.fetchedObjects else {
+            return true
+        }
+        return objects.isEmpty
+    }
 }
 
 extension TrackerCategoryStore:NSFetchedResultsControllerDelegate{

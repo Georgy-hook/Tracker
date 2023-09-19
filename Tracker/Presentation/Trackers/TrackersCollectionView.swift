@@ -10,10 +10,10 @@ final class TrackersCollectionView: UICollectionView {
     
     // MARK: - Variables
     private let params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
-    var delegateVC: TrackersViewControllerProtocol?
+    weak var delegateVC: TrackersViewControllerProtocol?
     
-    var cells = [TrackerCategory]()
-    
+    private var cells = [TrackerCategory]()
+    private var completedID: Set<UUID> = []
     // MARK: - Initiliazation
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -38,6 +38,10 @@ final class TrackersCollectionView: UICollectionView {
         self.reloadData()
     }
     
+    func setCompletedTrackers(with completedID:Set<UUID>){
+        self.completedID = completedID
+        reloadData()
+    }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,7 +61,11 @@ extension TrackersCollectionView:UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.reuseId, for: indexPath) as! TrackersCollectionViewCell
         cell.set(with: cells[indexPath.section].trackers[indexPath.item])
+
         cell.delegateVC = delegateVC
+        if completedID.contains(cells[indexPath.section].trackers[indexPath.item].id) {
+            cell.setCompletedTracker()
+        }
         return cell
     }    
 }

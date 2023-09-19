@@ -19,7 +19,10 @@ class TempStorage {
         var category: String?
         
         var isComplete: Bool {
-              return id != nil && name != nil && color != nil && emoji != nil && schedule != nil && category != nil
+            guard id != nil && name != nil && color != nil && emoji != nil && schedule != nil && category != nil else { return false }
+            guard name != "" && color != "" && emoji != "" && schedule != [] && category != "" else { return false }
+            
+            return true
           }
     }
     private var tempTracker: TempTracker = TempTracker()

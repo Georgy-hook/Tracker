@@ -7,9 +7,10 @@
 
 import UIKit
 
-protocol TrackersViewControllerProtocol{
+protocol TrackersViewControllerProtocol: AnyObject{
     func addCompletedTracker(_ tracker: Tracker)
     func removeCompletedTracker(_ tracker: Tracker)
+    func countRecords(forUUID uuid: UUID) -> Int
     var currentDate:Date { get }
     var completedTrackers: [TrackerRecord] {get}
 }
@@ -19,6 +20,7 @@ final class TrackersViewController: UIViewController {
     //MARK: - UI Elements
     private let searchController: UISearchController = {
         let search = UISearchController(searchResultsController: nil)
+        search.searchBar.isUserInteractionEnabled = false
         search.searchBar.placeholder = "Поиск"
         search.hidesNavigationBarDuringPresentation = false
         search.searchBar.tintColor = UIColor(named: "YP Blue")
@@ -28,6 +30,7 @@ final class TrackersViewController: UIViewController {
     
     private let datePicker:UIDatePicker = {
         let datePicker = UIDatePicker()
+        datePicker.isUserInteractionEnabled = false
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
         datePicker.locale = Locale(identifier: "ru_RU")
@@ -54,23 +57,33 @@ final class TrackersViewController: UIViewController {
     private let trackersCollectionView = TrackersCollectionView()
     
     //MARK: - Variables
-    private var trackersCategories:[TrackerCategory] = [] {
-        didSet{
-            changePlaceholder(trackersCategories.isEmpty)
-            visibleTrackers = trackersCategories
-        }
-    }
+    private var trackersCategories:[TrackerCategory] = []
     private var visibleTrackers:[TrackerCategory] = []
     private let tempStorage = TempStorage.shared
     private let dateFormatter = AppDateFormatter.shared
     var completedTrackers: [TrackerRecord] = []
-    private var completedID: Set<UUID> = []
     private let trackerStore = TrackerStore()
+    private let trackerRecordStore = TrackerRecordStore()
     
     var currentDate: Date = Date() {
         didSet {
             filterRelevantTrackers()
+            let completedID = trackerRecordStore.getCompletedID(with: currentDate)
+            setCompletedTrackers(with: completedID)
+            currentState = trackerStore.isEmpty() ? .notFound:.hide
         }
+    }
+    
+    var currentState: placeholderState = .noData {
+        didSet{
+            updatePlaceholder(for: currentState)
+        }
+    }
+    
+    enum placeholderState{
+        case noData
+        case notFound
+        case hide
     }
     
     //MARK: - Life cycle
@@ -90,7 +103,7 @@ extension TrackersViewController{
     private func configureUI(){
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
-        changePlaceholder(trackerStore.isEmpty())
+        currentState = trackerStore.isEmpty() ? .notFound:.hide
         trackerStore.delegate = trackersCollectionView
         currentDate = datePicker.date
         trackersCollectionView.delegateVC = self
@@ -163,6 +176,7 @@ extension TrackersViewController:UISearchResultsUpdating{
         do {
             try trackerStore.searchTrackers(with: lowercaseSearchText, forDay: currentDay)
             trackersCollectionView.set(cells: trackerStore.trackers)
+            currentState = trackerStore.isEmpty() ? .notFound:.hide
         } catch {
             print("Error searching for trackers: \(error)")
         }
@@ -173,12 +187,31 @@ extension TrackersViewController:UISearchResultsUpdating{
 extension TrackersViewController:TrackersViewControllerProtocol {
     func addCompletedTracker(_ tracker: Tracker) {
         let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
-        completedTrackers.append(newRecord)
+        do{
+            try trackerRecordStore.addNewRecord(newRecord)
+        } catch{
+            print("Error with completedTrackers: \(error)")
+        }
+        print(trackerRecordStore.completedTrackers)
+        print(trackerRecordStore.countRecords(forUUID: tracker.id))
     }
     
     func removeCompletedTracker(_ tracker: Tracker) {
-        completedTrackers.removeAll { $0.recordID == tracker.id && Calendar.current.isDate($0.date, inSameDayAs: currentDate) }
+        do {
+            try trackerRecordStore.removeRecord(for: tracker.id, with: currentDate)
+        } catch {
+            print("No delete: \(error)")
+        }
     }
+    
+    func setCompletedTrackers(with completedID:Set<UUID>){
+        trackersCollectionView.setCompletedTrackers(with: completedID)
+    }
+    
+    func countRecords(forUUID uuid: UUID) -> Int{
+        return trackerRecordStore.countRecords(forUUID: uuid)
+    }
+    
 }
 
 //MARK: - Filter methods
@@ -196,12 +229,22 @@ extension TrackersViewController{
        
     }
 
-    
-    private func changePlaceholder(_ isEmpty: Bool) {
-        placeholderImageView.image = UIImage(named: trackersCategories.isEmpty ? "RoundStar" : "NotFound")
-        initialLabel.text = trackersCategories.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
-        
-        placeholderImageView.isHidden = !isEmpty
-        initialLabel.isHidden = !isEmpty
+    private func updatePlaceholder(for state: placeholderState) {
+        placeholderImageView.isHidden = false
+        initialLabel.isHidden = false
+        switch state {
+        case .noData:
+            placeholderImageView.image = UIImage(named: "RoundStar")
+            initialLabel.text = "Что будем отслеживать?"
+        case .notFound:
+            placeholderImageView.image = UIImage(named: "NotFound")
+            initialLabel.text = "Ничего не найдено"
+        case .hide:
+            datePicker.isUserInteractionEnabled = true
+            searchController.searchBar.isUserInteractionEnabled = true
+            placeholderImageView.isHidden = true
+            initialLabel.isHidden = true
+        }
     }
+
 }

@@ -11,11 +11,7 @@ class TrackersCollectionViewCell: UICollectionViewCell {
     
     static let reuseId = "TrackersCollectionViewCell"
     
-    private var tracker:Tracker? {
-        didSet{
-            configureUI()
-        }
-    }
+    private var tracker:Tracker?
     
     private var completedDays = 0 {
         didSet {
@@ -23,7 +19,11 @@ class TrackersCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    var delegateVC: TrackersViewControllerProtocol?
+    weak var delegateVC: TrackersViewControllerProtocol?{
+        didSet{
+            configureUI()
+        }
+    }
     
     private let counterLabel: UILabel = {
         let label = UILabel()
@@ -38,7 +38,6 @@ class TrackersCollectionViewCell: UICollectionViewCell {
         button.setImage(UIImage(named: "ButtonPlus")?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.setImage(UIImage(named: "Done")?.withRenderingMode(.alwaysTemplate), for: .selected)
         button.layer.cornerRadius = 17
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -95,15 +94,14 @@ extension TrackersCollectionViewCell {
     private func configureUI(){
         guard let tracker = tracker else { return }
         checkButton.isSelected = false
-        emojiTextField.text = tracker.emoji
-        descriptionLabel.text = tracker.name
-        cardView.backgroundColor = UIColor(named: tracker.color)
         checkButton.backgroundColor = .clear
         checkButton.setImage(UIImage(named: "ButtonPlus")?.withRenderingMode(.alwaysTemplate), for: .normal)
         checkButton.tintColor = isSelected ? UIColor(named: "YP White"):UIColor(named: tracker.color)
+        emojiTextField.text = tracker.emoji
+        descriptionLabel.text = tracker.name
+        cardView.backgroundColor = UIColor(named: tracker.color)
         counterLabel.text = dayToString(completedDays)
-        isThisDaySelected()
-        
+        completedDays = delegateVC?.countRecords(forUUID: tracker.id) ?? 6
     }
     
     private func addSubviews() {
@@ -167,48 +165,38 @@ extension TrackersCollectionViewCell{
     func set(with tracker: Tracker){
         self.tracker = tracker
     }
+    
+    func setCompletedTracker(){
+        checkButton.isSelected = true
+        checkButtonShouldTapped(with: checkButton.isSelected)
+    }
 }
 
 // MARK: - Actions
 private extension TrackersCollectionViewCell{
     @objc func checkButtonDidTapped(){
         guard let tracker = tracker else { return }
-        let currentDay = delegateVC?.currentDate ?? Date()
-        guard currentDay <= Date() else { return }
-        
-        if !checkButton.isSelected{
-            checkButton.backgroundColor = UIColor(named: tracker.color)
-            checkButton.tintColor = UIColor(named: "YP White")
+        checkButton.isSelected.toggle()
+        if checkButton.isSelected{
+            checkButtonShouldTapped(with: checkButton.isSelected)
             completedDays += 1
-            
-            checkButton.isSelected.toggle()
             delegateVC?.addCompletedTracker(tracker)
         } else{
-            
-            checkButton.backgroundColor = .clear
-            checkButton.tintColor = UIColor(named: tracker.color)
+            checkButtonShouldTapped(with: checkButton.isSelected)
             completedDays -= 1
-            
-            checkButton.isSelected.toggle()
             delegateVC?.removeCompletedTracker(tracker)
         }
     }
     
-    func isThisDaySelected(){
+    func checkButtonShouldTapped(with selectedState:Bool){
         guard let tracker = tracker else { return }
-        let currentDay = delegateVC?.currentDate ?? Date()
-        let containsRecordWithCurrentDate = delegateVC?.completedTrackers.contains { record in
-            return Calendar.current.isDate(record.date, inSameDayAs: currentDay)
-        } ?? false
-        if containsRecordWithCurrentDate {
-            checkButton.isSelected = true
+        
+        if selectedState {
             checkButton.backgroundColor = UIColor(named: tracker.color)
             checkButton.tintColor = UIColor(named: "YP White")
-        }else{
-            checkButton.isSelected = false
+        } else{
             checkButton.backgroundColor = .clear
             checkButton.tintColor = UIColor(named: tracker.color)
-            
         }
     }
 }

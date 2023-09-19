@@ -97,7 +97,7 @@ extension NewCategoryViewController {
 // MARK: - Actions
 extension NewCategoryViewController{
     @objc private func didAddButtonTapped(){
-        guard let categoryVC = presentingViewController as? CategoryViewController else {return}
+        guard let categoryVC = presentingViewController as? CategoryViewController else { return }
         guard let categoryName = categoryName.text else { return }
         do{
            try trackerCategoryStore.createCategory(withTitle: categoryName)
@@ -105,6 +105,7 @@ extension NewCategoryViewController{
         catch{
             print(error)
         }
+        categoryVC.checkPlaceholder()
         dismiss(animated: true)
     }
 }
