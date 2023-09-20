@@ -69,7 +69,6 @@ final class TrackersViewController: UIViewController {
         didSet {
             filterRelevantTrackers()
             let completedID = trackerRecordStore.getCompletedID(with: currentDate)
-            print(completedID)
             setCompletedTrackers(with: completedID)
             currentState = trackerStore.isEmpty() ? .notFound:.hide
         }

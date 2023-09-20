@@ -128,7 +128,6 @@ final class TrackerRecordStore: NSObject{
     
     func getCompletedID(with currentDate:Date) -> Set<UUID>{
         var completedID: Set<UUID> = []
-        print("completed trackers: \(completedTrackers)")
         completedTrackers.forEach({
             if Calendar.current.isDate($0.date, inSameDayAs: currentDate){
                 completedID.insert($0.recordID)
