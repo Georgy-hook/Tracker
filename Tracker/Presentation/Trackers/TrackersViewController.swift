@@ -69,6 +69,7 @@ final class TrackersViewController: UIViewController {
         didSet {
             filterRelevantTrackers()
             let completedID = trackerRecordStore.getCompletedID(with: currentDate)
+            print(completedID)
             setCompletedTrackers(with: completedID)
             currentState = trackerStore.isEmpty() ? .notFound:.hide
         }
@@ -103,9 +104,9 @@ extension TrackersViewController{
     private func configureUI(){
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
-        currentState = trackerStore.isEmpty() ? .notFound:.hide
         trackerStore.delegate = trackersCollectionView
         currentDate = datePicker.date
+        currentState = trackerStore.isEmpty() ? .noData:.hide
         trackersCollectionView.delegateVC = self
         trackersCollectionView.set(cells: trackerStore.trackers)
     }
@@ -158,6 +159,7 @@ extension TrackersViewController{
     }
     
     @objc private func didTapLeftButton(){
+        tempStorage.resetTempTracker()
         present(ChooseTypeVC(), animated: true)
     }
     
@@ -192,8 +194,6 @@ extension TrackersViewController:TrackersViewControllerProtocol {
         } catch{
             print("Error with completedTrackers: \(error)")
         }
-        print(trackerRecordStore.completedTrackers)
-        print(trackerRecordStore.countRecords(forUUID: tracker.id))
     }
     
     func removeCompletedTracker(_ tracker: Tracker) {

@@ -106,6 +106,7 @@ final class TrackerRecordStore: NSObject{
         }){
             context.delete(recordToDelete)
             try context.save()
+            try fetchedResultsController.performFetch()
         } else {
             throw TrackerRecordStoreError.deletingError
         }
@@ -127,6 +128,7 @@ final class TrackerRecordStore: NSObject{
     
     func getCompletedID(with currentDate:Date) -> Set<UUID>{
         var completedID: Set<UUID> = []
+        print("completed trackers: \(completedTrackers)")
         completedTrackers.forEach({
             if Calendar.current.isDate($0.date, inSameDayAs: currentDate){
                 completedID.insert($0.recordID)
@@ -138,16 +140,13 @@ final class TrackerRecordStore: NSObject{
     func countRecords(forUUID uuid: UUID) -> Int {
         guard let fetchedResultsController = fetchedResultsController,
               let objects = fetchedResultsController.fetchedObjects else {
-            return 0 // Нет данных для подсчета
+            return 0
         }
 
-        // Создаем предикат для фильтрации объектов с заданным UUID
         let predicate = NSPredicate(format: "recordID == %@", uuid as CVarArg)
 
-        // Фильтруем объекты с использованием предиката
         let filteredObjects = objects.filter { predicate.evaluate(with: $0) }
 
-        // Возвращаем количество найденных объектов
         return filteredObjects.count
     }
 
