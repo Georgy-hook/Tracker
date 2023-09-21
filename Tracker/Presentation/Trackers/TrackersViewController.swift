@@ -30,7 +30,6 @@ final class TrackersViewController: UIViewController {
     
     private let datePicker:UIDatePicker = {
         let datePicker = UIDatePicker()
-        datePicker.isUserInteractionEnabled = false
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
         datePicker.locale = Locale(identifier: "ru_RU")
@@ -239,7 +238,6 @@ extension TrackersViewController{
             placeholderImageView.image = UIImage(named: "NotFound")
             initialLabel.text = "Ничего не найдено"
         case .hide:
-            datePicker.isUserInteractionEnabled = true
             searchController.searchBar.isUserInteractionEnabled = true
             placeholderImageView.isHidden = true
             initialLabel.isHidden = true
