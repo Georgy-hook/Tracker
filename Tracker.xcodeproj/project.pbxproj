@@ -23,6 +23,8 @@
 		661B6C2A2A9CC42E008BEC08 /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C292A9CC42E008BEC08 /* SupplementaryView.swift */; };
 		661B6C2D2A9CDB4F008BEC08 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C2C2A9CDB4F008BEC08 /* GeometricParams.swift */; };
 		661B6C2F2A9CE10F008BEC08 /* HabbitTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C2E2A9CE10F008BEC08 /* HabbitTableView.swift */; };
+		6657CDAE2AC06740003A5EF1 /* OnboardingViewController .swift in Sources */ = {isa = PBXBuildFile; fileRef = 6657CDAD2AC06740003A5EF1 /* OnboardingViewController .swift */; };
+		6657CDB02AC06B5F003A5EF1 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6657CDAF2AC06B5F003A5EF1 /* PageViewController.swift */; };
 		668AF3852AA7735800D974AD /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668AF3842AA7735800D974AD /* DateFormatter.swift */; };
 		66AE86122A9E1BB10055E245 /* Table + TextField CollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AE86112A9E1BB10055E245 /* Table + TextField CollectionCell.swift */; };
 		66AE86152A9E3F200055E245 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AE86142A9E3F200055E245 /* CategoryViewController.swift */; };
@@ -58,6 +60,8 @@
 		661B6C292A9CC42E008BEC08 /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		661B6C2C2A9CDB4F008BEC08 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		661B6C2E2A9CE10F008BEC08 /* HabbitTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabbitTableView.swift; sourceTree = "<group>"; };
+		6657CDAD2AC06740003A5EF1 /* OnboardingViewController .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingViewController .swift"; sourceTree = "<group>"; };
+		6657CDAF2AC06B5F003A5EF1 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		668AF3842AA7735800D974AD /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		66AE86112A9E1BB10055E245 /* Table + TextField CollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Table + TextField CollectionCell.swift"; sourceTree = "<group>"; };
 		66AE86142A9E3F200055E245 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
@@ -141,6 +145,15 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		6657CDAC2AC06629003A5EF1 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				6657CDAD2AC06740003A5EF1 /* OnboardingViewController .swift */,
+				6657CDAF2AC06B5F003A5EF1 /* PageViewController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		66AE86132A9E3F0A0055E245 /* Category */ = {
 			isa = PBXGroup;
 			children = (
@@ -208,6 +221,7 @@
 		66BF23A62A9A6F95000E2474 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				6657CDAC2AC06629003A5EF1 /* Onboarding */,
 				66E5223D2A9F66C200E6BEA2 /* Schedule */,
 				66AE86182A9E4A240055E245 /* ChooseType */,
 				66AE86172A9E4A180055E245 /* Statistic */,
@@ -326,6 +340,7 @@
 				660EBC072AAE0D9E00386C8F /* TrackerCategoryStore.swift in Sources */,
 				66BF23AE2A9B6F88000E2474 /* StatisticViewController.swift in Sources */,
 				661B6C1E2A9BCD83008BEC08 /* TrackerRecordModel.swift in Sources */,
+				6657CDAE2AC06740003A5EF1 /* OnboardingViewController .swift in Sources */,
 				66BF23902A9A5E27000E2474 /* AppDelegate.swift in Sources */,
 				661B6C2D2A9CDB4F008BEC08 /* GeometricParams.swift in Sources */,
 				66E5223F2A9F66D200E6BEA2 /* ScheduleViewController.swift in Sources */,
@@ -333,6 +348,7 @@
 				661B6C2F2A9CE10F008BEC08 /* HabbitTableView.swift in Sources */,
 				661B6C262A9BED19008BEC08 /* HabbitCollectionView.swift in Sources */,
 				66E5223C2A9E776F00E6BEA2 /* NewCategoryViewController.swift in Sources */,
+				6657CDB02AC06B5F003A5EF1 /* PageViewController.swift in Sources */,
 				661B6C282A9CB46D008BEC08 /* HabbitCollectionViewCell.swift in Sources */,
 				660EBC052AAE0D9200386C8F /* TrackerStore.swift in Sources */,
 				66BF23A82A9A6FCD000E2474 /* TabBarController.swift in Sources */,
