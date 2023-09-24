@@ -10,7 +10,7 @@ class ListCollectionViewCell:UICollectionViewCell{
     
     // MARK: - Variables
     static let reuseId = "ListCollectionViewCell"
-    var delegateVC: HabbitViewControllerProtocol?
+    weak var delegateVC: HabbitViewControllerProtocol?
     
     // MARK: - UI Elements
     private let trackerName: TextFieldWithPadding = {
@@ -67,14 +67,14 @@ extension ListCollectionViewCell{
             habbitTableView.topAnchor.constraint(equalTo: trackerName.bottomAnchor, constant: 24),
             habbitTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             habbitTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            habbitTableView.heightAnchor.constraint(equalToConstant: 149)
+            //habbitTableView.heightAnchor.constraint(equalToConstant: 149)
         ])
     }
 }
 
 extension ListCollectionViewCell:UITextFieldDelegate{
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let name = textField.text, name != ""  else {
+        guard let name = textField.text else {
             return
         }
         TempStorage.shared.setName(name)

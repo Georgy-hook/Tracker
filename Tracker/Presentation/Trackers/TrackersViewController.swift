@@ -7,9 +7,10 @@
 
 import UIKit
 
-protocol TrackersViewControllerProtocol{
+protocol TrackersViewControllerProtocol: AnyObject{
     func addCompletedTracker(_ tracker: Tracker)
     func removeCompletedTracker(_ tracker: Tracker)
+    func countRecords(forUUID uuid: UUID) -> Int
     var currentDate:Date { get }
     var completedTrackers: [TrackerRecord] {get}
 }
@@ -19,6 +20,7 @@ final class TrackersViewController: UIViewController {
     //MARK: - UI Elements
     private let searchController: UISearchController = {
         let search = UISearchController(searchResultsController: nil)
+        search.searchBar.isUserInteractionEnabled = false
         search.searchBar.placeholder = "Поиск"
         search.hidesNavigationBarDuringPresentation = false
         search.searchBar.tintColor = UIColor(named: "YP Blue")
@@ -54,22 +56,33 @@ final class TrackersViewController: UIViewController {
     private let trackersCollectionView = TrackersCollectionView()
     
     //MARK: - Variables
-    private var trackersCategories:[TrackerCategory] = [] {
-        didSet{
-            changePlaceholder(trackersCategories.isEmpty)
-            visibleTrackers = trackersCategories
-        }
-    }
+    private var trackersCategories:[TrackerCategory] = []
     private var visibleTrackers:[TrackerCategory] = []
     private let tempStorage = TempStorage.shared
     private let dateFormatter = AppDateFormatter.shared
     var completedTrackers: [TrackerRecord] = []
-    private var completedID: Set<UUID> = []
+    private let trackerStore = TrackerStore()
+    private let trackerRecordStore = TrackerRecordStore()
     
     var currentDate: Date = Date() {
         didSet {
             filterRelevantTrackers()
+            let completedID = trackerRecordStore.getCompletedID(with: currentDate)
+            setCompletedTrackers(with: completedID)
+            currentState = trackerStore.isEmpty() ? .notFound:.hide
         }
+    }
+    
+    var currentState: placeholderState = .noData {
+        didSet{
+            updatePlaceholder(for: currentState)
+        }
+    }
+    
+    enum placeholderState{
+        case noData
+        case notFound
+        case hide
     }
     
     //MARK: - Life cycle
@@ -89,14 +102,17 @@ extension TrackersViewController{
     private func configureUI(){
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
-        changePlaceholder(trackersCategories.isEmpty)
+        trackerStore.delegate = trackersCollectionView
         currentDate = datePicker.date
+        currentState = trackerStore.isEmpty() ? .noData:.hide
         trackersCollectionView.delegateVC = self
+        trackersCollectionView.set(cells: trackerStore.trackers)
     }
     
     private func addSubviews(){
         view.addSubview(placeholderImageView)
         view.addSubview(initialLabel)
+        view.addSubview(trackersCollectionView)
     }
     
     private func applyConstraints(){
@@ -107,7 +123,12 @@ extension TrackersViewController{
             placeholderImageView.heightAnchor.constraint(equalToConstant: 80),
             
             initialLabel.topAnchor.constraint(equalTo: placeholderImageView.bottomAnchor, constant: 8),
-            initialLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+            initialLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            
+            trackersCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             
         ])
     }
@@ -136,6 +157,7 @@ extension TrackersViewController{
     }
     
     @objc private func didTapLeftButton(){
+        tempStorage.resetTempTracker()
         present(ChooseTypeVC(), animated: true)
     }
     
@@ -147,83 +169,79 @@ extension TrackersViewController{
 //MARK: - SearchController
 extension TrackersViewController:UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
-        guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else{ return }
-        let filteredCategories = trackersCategories.compactMap { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                tracker.name.lowercased().hasPrefix(lowercaseSearchText)
-            }
-            return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
+        guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else { return }
+        
+        let currentDay = dateFormatter.dayOfWeekInt(for: currentDate)
+        
+        do {
+            try trackerStore.searchTrackers(with: lowercaseSearchText, forDay: currentDay)
+            trackersCollectionView.set(cells: trackerStore.trackers)
+            currentState = trackerStore.isEmpty() ? .notFound:.hide
+        } catch {
+            print("Error searching for trackers: \(error)")
         }
-        visibleTrackers = filteredCategories
-        changePlaceholder(filteredCategories.isEmpty)
-        trackersCollectionView.set(cells: visibleTrackers)
     }
 }
 
 //MARK: - TrackersViewControllerProtocol
 extension TrackersViewController:TrackersViewControllerProtocol {
-    func updateTrackers(with track:Tracker){
-        guard let title = tempStorage.getCategory() else { return }
-        if trackersCategories.isEmpty {
-            self.trackersCategories.append(TrackerCategory(title: title, trackers: [track]))
-            addCollectionView()
-        }
-        else{
-            for tracker in self.trackersCategories {
-                if tracker.title == tempStorage.getCategory(){
-                    tracker.addedNewTracker(track)
-                }else{
-                    self.trackersCategories.append(TrackerCategory(title: title, trackers: [track]))
-                }
-            }
-        }
-        trackersCollectionView.set(cells: visibleTrackers)
-        tempStorage.resetTempTracker()
-    }
-    
     func addCompletedTracker(_ tracker: Tracker) {
         let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
-        completedTrackers.append(newRecord)
+        do{
+            try trackerRecordStore.addNewRecord(newRecord)
+        } catch{
+            print("Error with completedTrackers: \(error)")
+        }
     }
     
     func removeCompletedTracker(_ tracker: Tracker) {
-        completedTrackers.removeAll { $0.recordID == tracker.id && Calendar.current.isDate($0.date, inSameDayAs: currentDate) }
+        do {
+            try trackerRecordStore.removeRecord(for: tracker.id, with: currentDate)
+        } catch {
+            print("No delete: \(error)")
+        }
     }
     
-    private func addCollectionView(){
-        
-        view.addSubview(trackersCollectionView)
-        
-        NSLayoutConstraint.activate([
-            trackersCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        ])
+    func setCompletedTrackers(with completedID:Set<UUID>){
+        trackersCollectionView.setCompletedTrackers(with: completedID)
     }
+    
+    func countRecords(forUUID uuid: UUID) -> Int{
+        return trackerRecordStore.countRecords(forUUID: uuid)
+    }
+    
 }
 
 //MARK: - Filter methods
 extension TrackersViewController{
     private func filterRelevantTrackers() {
-        let currentDay = dateFormatter.dateToDays(with: currentDate)
+        let currentDay = dateFormatter.dayOfWeekInt(for: currentDate)
         
-        let result = trackersCategories.compactMap { category in
-            let relevantTrackers = category.trackers.filter { tracker in
-                tracker.getDays().contains(currentDay)
-            }
-            
-            return relevantTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: relevantTrackers)
+        do {
+            try trackerStore.fetchRelevantTrackers(forDay: currentDay)
+            trackersCollectionView.set(cells: trackerStore.trackers)
         }
-        visibleTrackers = result
-        trackersCollectionView.set(cells: visibleTrackers)
+        catch {
+           print(error)
+        }
+       
     }
-    
-    private func changePlaceholder(_ isEmpty: Bool) {
-        placeholderImageView.image = UIImage(named: trackersCategories.isEmpty ? "RoundStar" : "NotFound")
-        initialLabel.text = trackersCategories.isEmpty ? "Что будем отслеживать?" : "Ничего не найдено"
-        
-        placeholderImageView.isHidden = !isEmpty
-        initialLabel.isHidden = !isEmpty
+
+    private func updatePlaceholder(for state: placeholderState) {
+        placeholderImageView.isHidden = false
+        initialLabel.isHidden = false
+        switch state {
+        case .noData:
+            placeholderImageView.image = UIImage(named: "RoundStar")
+            initialLabel.text = "Что будем отслеживать?"
+        case .notFound:
+            placeholderImageView.image = UIImage(named: "NotFound")
+            initialLabel.text = "Ничего не найдено"
+        case .hide:
+            searchController.searchBar.isUserInteractionEnabled = true
+            placeholderImageView.isHidden = true
+            initialLabel.isHidden = true
+        }
     }
+
 }

@@ -33,4 +33,10 @@ class AppDateFormatter {
     func dateToDays(with date:Date) -> String{
         return dateFormatterToDays.string(from: date).capitalized
     }
+    
+    func dayOfWeekInt(for date: Date) -> Int {
+           let calendar = Calendar.current
+           let components = calendar.dateComponents([.weekday], from: date)
+           return (components.weekday! + 5) % 7
+       }
 }

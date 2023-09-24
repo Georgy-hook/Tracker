@@ -84,10 +84,13 @@ extension ChooseTypeVC {
 
 extension ChooseTypeVC{
     @objc private func habitButtonTapped(){
-        present(HabbitViewController(),animated: true)
+        let habbitVC = HabbitViewController()
+        present(habbitVC,animated: true)
     }
     
     @objc private func irregularEventButtonTapped(){
-        
+        let habbitVC = HabbitViewController()
+        habbitVC.isIrregular = true
+        present(habbitVC,animated: true)
     }
 }

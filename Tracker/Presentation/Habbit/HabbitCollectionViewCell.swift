@@ -34,7 +34,6 @@ class HabbitCollectionViewCell:UICollectionViewCell{
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.layer.cornerRadius = 8
         self.clipsToBounds = false
     }
 
@@ -53,10 +52,10 @@ extension HabbitCollectionViewCell {
     
     private func applyConstraints() {
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: topAnchor, constant: 3),
-            textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 3),
-            textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -3),
-            textField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -3)
+            textField.topAnchor.constraint(equalTo: topAnchor, constant: 6),
+            textField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
+            textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6),
+            textField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6)
         ])
     }
 }
@@ -89,10 +88,17 @@ extension HabbitCollectionViewCell{
         switch indexPath.section{
         case 1:
             self.backgroundColor = UIColor(named: "YP Light Gray")
+            self.layer.cornerRadius = 16
+            
+            guard let emoji = textField.text else { return }
+            TempStorage.shared.setEmoji(emoji)
         case 2:
             let borderColor = UIColor(named: "Color selection \(indexPath.row + 1)")?.withAlphaComponent(0.5).cgColor
+            self.layer.cornerRadius = 8
             self.layer.borderColor = borderColor
-            self.layer.borderWidth = 1
+            self.layer.borderWidth = 3
+            
+            TempStorage.shared.setColor("Color selection \(indexPath.row + 1)")
         default:
             break
         }
@@ -102,9 +108,13 @@ extension HabbitCollectionViewCell{
         switch indexPath.section{
         case 1:
             self.backgroundColor = .clear
+            
+            TempStorage.shared.setEmoji("")
         case 2:
             self.layer.borderColor = nil
             self.layer.borderWidth = 0
+            
+            TempStorage.shared.setColor("")
         default:
             break
         }

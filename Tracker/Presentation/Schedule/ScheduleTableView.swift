@@ -44,6 +44,7 @@ extension ScheduleTableView:UITableViewDataSource{
         cell.textLabel?.textColor = UIColor(named: "YP Black")
         
         let toggle = UISwitch(frame: CGRect(x: 0, y: 0, width: 51, height: 31))
+        toggle.onTintColor = UIColor(named: "YP Blue")
         toggle.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
         cell.accessoryView = toggle
         

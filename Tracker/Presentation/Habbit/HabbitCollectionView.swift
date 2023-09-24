@@ -11,8 +11,8 @@ final class HabbitCollectionView: UICollectionView {
     
     // MARK: - Variables
     private let params = GeometricParams(cellCount: 6, leftInset: 19, rightInset: 19, cellSpacing: 5)
-    var delegateVC: HabbitViewControllerProtocol?
-
+    weak var delegateVC: HabbitViewControllerProtocol?
+    
     // MARK: - Initiliazation
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -27,7 +27,7 @@ final class HabbitCollectionView: UICollectionView {
         
         backgroundColor = .clear
         translatesAutoresizingMaskIntoConstraints = false
-        //TODO: allowsMultipleSelection = true пока непонятно как взять по одному из каждой секции
+        allowsMultipleSelection = true
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
     }
@@ -98,17 +98,25 @@ extension HabbitCollectionView:UICollectionViewDelegate{
         view.titleLabel.text = titleLabel
         return view
     }
-    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        
+        collectionView.indexPathsForSelectedItems?.filter({ $0.section == indexPath.section }).forEach({
+            collectionView.deselectItem(at: $0, animated: false)
+            let cell = cellForItem(at: $0) as? HabbitCollectionViewCell
+            cell?.isDeselected(for: $0)
+        })
+        return true
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = cellForItem(at: indexPath) as? HabbitCollectionViewCell
         cell?.isSelected(for: indexPath)
-        cell?.didTapped(on: indexPath)
         delegateVC?.shouldUpdateUI()
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = cellForItem(at: indexPath) as? HabbitCollectionViewCell
         cell?.isDeselected(for: indexPath)
+        delegateVC?.shouldUpdateUI()
     }
 }
 
@@ -142,7 +150,11 @@ extension HabbitCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch indexPath.section{
         case 0:
-            return CGSize(width: collectionView.frame.width - 32, height: 250)
+            let availableWidth = collectionView.frame.width - 32
+            guard delegateVC?.isIrregular ?? false else {
+                return CGSize(width: availableWidth , height: 250)
+            }
+            return CGSize(width: availableWidth , height: 175)
         default:
             let availableWidth = collectionView.frame.width - params.paddingWidth
             let cellWidth =  availableWidth / CGFloat(params.cellCount)
