@@ -45,7 +45,7 @@ class CategoryTableView:UITableView{
 // MARK: - UITableViewDataSource
 extension CategoryTableView:UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return delegateVC?.getCountOfCategories() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,14 +64,19 @@ extension CategoryTableView:UITableViewDelegate{
         return 75
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        TempStorage.shared.setCategory(categories[indexPath.row])
+        delegateVC?.setCategory(named: categories[indexPath.row])
         delegateVC?.presentHabbitVC()
     }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+         return contextMenuConfiguration(for: indexPath)
+     }
 }
 
 extension CategoryTableView{
     func set(with categories:[String]){
         self.categories = categories
+        updateTableViewHeight()
         self.reloadData()
     }
     
@@ -86,28 +91,23 @@ extension CategoryTableView{
     }
 }
 
-extension CategoryTableView:TrackerCategoryStoreDelegate{
+extension CategoryTableView{
     
     func updateTableViewHeight() {
         invalidateIntrinsicContentSize()
     }
     
-    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
-        categories = trackerCategoryStore.trackersCategories.map { $0.title }
-        updateTableViewHeight()
-        self.performBatchUpdates {
-            let insertedIndexPaths = update.insertedIndexes.map { IndexPath(row: $0, section: 0) }
-            let deletedIndexPaths = update.deletedIndexes.map { IndexPath(row: $0, section: 0) }
-            let updatedIndexPaths = update.updatedIndexes.map { IndexPath(row: $0, section: 0) }
-            self.insertRows(at: insertedIndexPaths, with: .automatic)
-            self.insertRows(at: insertedIndexPaths, with: .automatic)
-            self.insertRows(at: insertedIndexPaths, with: .automatic)
-            for move in update.movedIndexes {
-                self.moveRow(
-                    at: IndexPath(item: move.oldIndex, section: 0),
-                    to: IndexPath(item: move.newIndex, section: 0)
-                )
-            }
-        }
-    }
+    func contextMenuConfiguration(for indexPath: IndexPath) -> UIContextMenuConfiguration {
+          let editAction = UIAction(title: "Редактировать") { action in
+              self.delegateVC?.didEditButtonTapped(on: self.categories[indexPath.row])
+          }
+          
+          let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
+              self.delegateVC?.deleteCategory(at: self.categories[indexPath.row])
+          }
+        
+          return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+              UIMenu(title: "", children: [editAction, deleteAction])
+          })
+      }
 }

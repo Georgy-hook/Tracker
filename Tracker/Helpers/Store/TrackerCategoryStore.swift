@@ -10,6 +10,7 @@ import UIKit
 enum TrackerCategoryStoreError: Error{
     case decodingErrorInvalidTitle
     case decodingErrorInvalidTracker
+    case deletingError
 }
 
 struct TrackerCategoryStoreUpdate {
@@ -99,6 +100,17 @@ final class TrackerCategoryStore: NSObject{
         try context.save()
     }
     
+    func updateCategory(oldTitle: String, newTitle: String) throws {
+        guard let categoryToUpdate = getCategory(byTitle: oldTitle) else {
+            throw TrackerCategoryStoreError.decodingErrorInvalidTitle
+        }
+        
+        categoryToUpdate.title = newTitle
+        
+        try context.save()
+    }
+
+    
     func addTracker(_ tracker: Tracker, toCategoryWithTitle categoryTitle: String) {
         do {
             if let category = getCategory(byTitle: categoryTitle) {
@@ -144,6 +156,23 @@ final class TrackerCategoryStore: NSObject{
             return true
         }
         return objects.isEmpty
+    }
+    
+    func deleteObject(at category:String) throws{
+        guard let fetchedResultsController = fetchedResultsController,
+              let objects = fetchedResultsController.fetchedObjects else {
+            return
+        }
+        
+        if let objectToDelete = objects.first(where: {
+            $0.title == category
+        }){
+            context.delete(objectToDelete)
+            try context.save()
+            try fetchedResultsController.performFetch()
+        } else {
+            throw TrackerCategoryStoreError.deletingError
+        }
     }
 }
 
