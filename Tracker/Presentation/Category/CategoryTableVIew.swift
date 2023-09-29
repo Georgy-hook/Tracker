@@ -75,9 +75,8 @@ extension CategoryTableView:UITableViewDelegate{
 }
 
 extension CategoryTableView {
-    func set(with newCategories: [String]) {
+    func set(with newCategories: [String], didUpdate changes: [CategoryChange]) {
         let oldCategories = self.categories
-        let changes = calculateChanges(from: oldCategories, to: newCategories)
         self.categories = newCategories
 
         updateTableViewHeight()

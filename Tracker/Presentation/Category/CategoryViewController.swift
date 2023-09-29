@@ -63,7 +63,8 @@ final class CategoryViewController: UIViewController {
         viewModel.$categories.bind{ [weak self] _ in
             guard let self = self else { return }
             checkPlaceholder()
-            categoryTableView.set(with: viewModel.categories)
+            viewModel.calculateChanges()
+            categoryTableView.set(with: viewModel.categories, didUpdate: viewModel.changes)
         }
         
         categoryTableView.delegateVC = self
@@ -81,7 +82,9 @@ extension CategoryViewController {
         addButton.addTarget(self, action: #selector(didAddButtonTapped), for: .touchUpInside)
         
         checkPlaceholder()
-        categoryTableView.set(with: viewModel.categories)
+        viewModel.calculateChanges()
+        print(viewModel.changes)
+        categoryTableView.set(with: viewModel.categories, didUpdate: viewModel.changes)
     }
     
     private func addSubviews() {

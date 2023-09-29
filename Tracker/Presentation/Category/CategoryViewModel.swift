@@ -7,10 +7,17 @@
 
 import Foundation
 
+enum CategoryChange {
+    case insert(IndexPath)
+    case delete(IndexPath)
+}
+
 final class CategoryViewModel{
     @Observable
     private(set) var categories:[String] = []
     
+    private var oldCategories:[String] = []
+    private(set) var changes: [CategoryChange] = []
     private let trackerCategoryStore = TrackerCategoryStore()
     private let tempStorage = TempStorage.shared
     
@@ -38,10 +45,30 @@ final class CategoryViewModel{
     func shouldUpdatePlaceholder() -> Bool{
         return !trackerCategoryStore.isEmpty()
     }
+    
+    func calculateChanges(){
+        changes = []
+        
+        let oldSet = Set(oldCategories)
+        let newSet = Set(categories)
+
+        for (index, category) in oldCategories.enumerated() {
+            if !newSet.contains(category) {
+                changes.append(.delete(IndexPath(row: index, section: 0)))
+            }
+        }
+
+        for (index, category) in categories.enumerated() {
+            if !oldSet.contains(category) {
+                changes.append(.insert(IndexPath(row: index, section: 0)))
+            }
+        }
+    }
 }
 
 extension CategoryViewModel:TrackerCategoryStoreDelegate{
     func store(_ store: TrackerCategoryStore) {
+        oldCategories = categories
         categories = store.trackersCategories.map{ $0.title }
     }
 }

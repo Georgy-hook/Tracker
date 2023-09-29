@@ -78,12 +78,24 @@ final class TrackerCategoryStore: NSObject{
     
     
     func createCategory(withTitle title: String) throws {
+        guard getCategory(byTitle: title) == nil else { return }
+        
         let category = TrackerCategoryCoreData(context: context)
         category.title = title
         try context.save()
     }
     
     func updateCategory(oldTitle: String, newTitle: String) throws {
+        
+        guard getCategory(byTitle: newTitle) == nil else {
+            do{
+                try deleteObject(at: oldTitle)
+            } catch{
+                print(error)
+            }
+            return
+        }
+        
         guard let categoryToUpdate = getCategory(byTitle: oldTitle) else {
             throw TrackerCategoryStoreError.decodingErrorInvalidTitle
         }
