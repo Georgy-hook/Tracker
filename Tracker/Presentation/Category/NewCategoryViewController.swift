@@ -8,8 +8,8 @@
 import UIKit
 
 enum CategoryViewControllerMode {
-    case create // Режим создания новой категории
-    case edit(categoryName: String) // Режим редактирования существующей категории
+    case create
+    case edit(categoryName: String)
 }
 
 final class NewCategoryViewController: UIViewController {
@@ -58,6 +58,7 @@ final class NewCategoryViewController: UIViewController {
     
     // MARK: - Variables
     let trackerCategoryStore = TrackerCategoryStore()
+    private var viewModel = NewCategoryViewModel()
     private let mode: CategoryViewControllerMode
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -121,16 +122,7 @@ extension NewCategoryViewController{
     @objc private func didAddButtonTapped(){
          guard let categoryVC = presentingViewController as? CategoryViewController else { return }
          guard let categoryName = categoryName.text else { return }
-         do {
-             switch mode {
-             case .create:
-                 try trackerCategoryStore.createCategory(withTitle: categoryName)
-             case .edit(let oldCategoryName):
-                 try trackerCategoryStore.updateCategory(oldTitle: oldCategoryName, newTitle: categoryName)
-             }
-         } catch {
-             print(error)
-         }
+         viewModel.shouldUpdateCategoryStore(with: categoryName, mode: mode)
          categoryVC.checkPlaceholder()
          dismiss(animated: true)
      }
@@ -146,6 +138,7 @@ extension NewCategoryViewController:UITextFieldDelegate{
         addButton.isUserInteractionEnabled = true
         addButton.backgroundColor = UIColor(named: "YP Black")
     }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return textField.resignFirstResponder()
     }

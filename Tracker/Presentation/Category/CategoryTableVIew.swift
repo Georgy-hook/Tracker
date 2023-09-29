@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 class CategoryTableView:UITableView{
     
@@ -73,12 +74,54 @@ extension CategoryTableView:UITableViewDelegate{
      }
 }
 
-extension CategoryTableView{
-    func set(with categories:[String]){
-        self.categories = categories
+extension CategoryTableView {
+    func set(with newCategories: [String]) {
+        let oldCategories = self.categories
+        let changes = calculateChanges(from: oldCategories, to: newCategories)
+        self.categories = newCategories
+
         updateTableViewHeight()
-        self.reloadData()
+
+        performBatchUpdates{
+            
+            for change in changes {
+                switch change {
+                case .insert(let indexPath):
+                    insertRows(at: [indexPath], with: .automatic)
+                case .delete(let indexPath):
+                    deleteRows(at: [indexPath], with: .automatic)
+                }
+            }
+            
+        }
     }
+
+    private func calculateChanges(from oldCategories: [String], to newCategories: [String]) -> [Change] {
+        var changes: [Change] = []
+
+        let oldSet = Set(oldCategories)
+        let newSet = Set(newCategories)
+
+        for (index, category) in oldCategories.enumerated() {
+            if !newSet.contains(category) {
+                changes.append(.delete(IndexPath(row: index, section: 0)))
+            }
+        }
+
+        for (index, category) in newCategories.enumerated() {
+            if !oldSet.contains(category) {
+                changes.append(.insert(IndexPath(row: index, section: 0)))
+            }
+        }
+
+        return changes
+    }
+
+enum Change {
+    case insert(IndexPath)
+    case delete(IndexPath)
+}
+
     
     private func hideLastSeparator(){
         let lastIndexPath = IndexPath(row: categories.count - 1, section: 0)

@@ -33,11 +33,15 @@ final class CategoryViewModel{
     
     func setCategory(named category: String){
         tempStorage.setCategory(category)
-    }    
+    } 
+    
+    func shouldUpdatePlaceholder() -> Bool{
+        return !trackerCategoryStore.isEmpty()
+    }
 }
 
 extension CategoryViewModel:TrackerCategoryStoreDelegate{
-    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
+    func store(_ store: TrackerCategoryStore) {
         categories = store.trackersCategories.map{ $0.title }
     }
 }

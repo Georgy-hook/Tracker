@@ -56,8 +56,6 @@ final class CategoryViewController: UIViewController {
     
     // MARK: - Variables
     private var viewModel = CategoryViewModel()
-    private let trackerCategoryStore = TrackerCategoryStore()
-    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,12 +151,17 @@ extension CategoryViewController:CategoryViewControllerProtocol{
     
     func deleteCategory(at categoryName:String){
         viewModel.deleteCategory(at: categoryName)
+        checkPlaceholder()
     }
 }
 
 extension CategoryViewController{
     func checkPlaceholder(){
-        guard !trackerCategoryStore.isEmpty() else { return }
+        guard viewModel.shouldUpdatePlaceholder() else {
+            starImageView.isHidden = false
+            initialLabel.isHidden = false
+            return
+        }
         starImageView.isHidden = true
         initialLabel.isHidden = true
     }
