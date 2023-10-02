@@ -63,6 +63,7 @@ extension HabbitCollectionView:UICollectionViewDataSource{
             return cell
         default:
             let cell = dequeueReusableCell(withReuseIdentifier: HabbitCollectionViewCell.reuseId, for: indexPath) as! HabbitCollectionViewCell
+            cell.delegateVC = delegateVC
             cell.set(with: indexPath)
             return cell
         }

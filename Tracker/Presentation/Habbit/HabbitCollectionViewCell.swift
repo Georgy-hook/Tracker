@@ -14,6 +14,8 @@ class HabbitCollectionViewCell:UICollectionViewCell{
 
     private let Emojes = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     
+    weak var delegateVC: HabbitViewControllerProtocol?
+    
     // MARK: - UI Elements
     private let textField: UITextField = {
         let textField = UITextField()
@@ -72,18 +74,6 @@ extension HabbitCollectionViewCell{
         }
     }
     
-    func didTapped(on indexPath:IndexPath){
-        switch indexPath.section{
-        case 1:
-            guard let emoji = textField.text else { return }
-            TempStorage.shared.setEmoji(emoji)
-        case 2:
-            TempStorage.shared.setColor("Color selection \(indexPath.row + 1)")
-        default:
-            break
-        }
-    }
-    
     func isSelected(for indexPath:IndexPath){
         switch indexPath.section{
         case 1:
@@ -91,14 +81,14 @@ extension HabbitCollectionViewCell{
             self.layer.cornerRadius = 16
             
             guard let emoji = textField.text else { return }
-            TempStorage.shared.setEmoji(emoji)
+            delegateVC?.setEmoji(emoji)
         case 2:
             let borderColor = UIColor(named: "Color selection \(indexPath.row + 1)")?.withAlphaComponent(0.5).cgColor
             self.layer.cornerRadius = 8
             self.layer.borderColor = borderColor
             self.layer.borderWidth = 3
             
-            TempStorage.shared.setColor("Color selection \(indexPath.row + 1)")
+            delegateVC?.setColor("Color selection \(indexPath.row + 1)")
         default:
             break
         }
@@ -109,12 +99,12 @@ extension HabbitCollectionViewCell{
         case 1:
             self.backgroundColor = .clear
             
-            TempStorage.shared.setEmoji("")
+            delegateVC?.setEmoji("")
         case 2:
             self.layer.borderColor = nil
             self.layer.borderWidth = 0
             
-            TempStorage.shared.setColor("")
+            delegateVC?.setColor("")
         default:
             break
         }

@@ -23,6 +23,7 @@
 		661B6C2A2A9CC42E008BEC08 /* SupplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C292A9CC42E008BEC08 /* SupplementaryView.swift */; };
 		661B6C2D2A9CDB4F008BEC08 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C2C2A9CDB4F008BEC08 /* GeometricParams.swift */; };
 		661B6C2F2A9CE10F008BEC08 /* HabbitTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 661B6C2E2A9CE10F008BEC08 /* HabbitTableView.swift */; };
+		663296DB2AC9A08800A71686 /* HabbitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663296DA2AC9A08800A71686 /* HabbitViewModel.swift */; };
 		6657CDAE2AC06740003A5EF1 /* OnboardingViewController .swift in Sources */ = {isa = PBXBuildFile; fileRef = 6657CDAD2AC06740003A5EF1 /* OnboardingViewController .swift */; };
 		6657CDB02AC06B5F003A5EF1 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6657CDAF2AC06B5F003A5EF1 /* PageViewController.swift */; };
 		666C6B6D2AC6F68A007EEE7E /* Array + Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666C6B6C2AC6F68A007EEE7E /* Array + Equatable.swift */; };
@@ -64,6 +65,7 @@
 		661B6C292A9CC42E008BEC08 /* SupplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplementaryView.swift; sourceTree = "<group>"; };
 		661B6C2C2A9CDB4F008BEC08 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		661B6C2E2A9CE10F008BEC08 /* HabbitTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabbitTableView.swift; sourceTree = "<group>"; };
+		663296DA2AC9A08800A71686 /* HabbitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabbitViewModel.swift; sourceTree = "<group>"; };
 		6657CDAD2AC06740003A5EF1 /* OnboardingViewController .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingViewController .swift"; sourceTree = "<group>"; };
 		6657CDAF2AC06B5F003A5EF1 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		666C6B6C2AC6F68A007EEE7E /* Array + Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Equatable.swift"; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				66AE86112A9E1BB10055E245 /* Table + TextField CollectionCell.swift */,
 				661B6C272A9CB46D008BEC08 /* HabbitCollectionViewCell.swift */,
 				661B6C2E2A9CE10F008BEC08 /* HabbitTableView.swift */,
+				663296DA2AC9A08800A71686 /* HabbitViewModel.swift */,
 			);
 			path = Habbit;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				661B6C1C2A9BCD32008BEC08 /* TrackerCategoryModel.swift in Sources */,
 				66B661ED2AC1BE2A006D9C78 /* CategoryViewModel.swift in Sources */,
 				66E522412A9F675D00E6BEA2 /* ScheduleTableView.swift in Sources */,
+				663296DB2AC9A08800A71686 /* HabbitViewModel.swift in Sources */,
 				66AE86152A9E3F200055E245 /* CategoryViewController.swift in Sources */,
 				660EBC092AAE0DA700386C8F /* TrackerRecordStore.swift in Sources */,
 				661B6C212A9BE198008BEC08 /* HabbitViewController.swift in Sources */,

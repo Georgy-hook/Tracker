@@ -94,33 +94,6 @@ extension CategoryTableView {
             
         }
     }
-
-    private func calculateChanges(from oldCategories: [String], to newCategories: [String]) -> [Change] {
-        var changes: [Change] = []
-
-        let oldSet = Set(oldCategories)
-        let newSet = Set(newCategories)
-
-        for (index, category) in oldCategories.enumerated() {
-            if !newSet.contains(category) {
-                changes.append(.delete(IndexPath(row: index, section: 0)))
-            }
-        }
-
-        for (index, category) in newCategories.enumerated() {
-            if !oldSet.contains(category) {
-                changes.append(.insert(IndexPath(row: index, section: 0)))
-            }
-        }
-
-        return changes
-    }
-
-enum Change {
-    case insert(IndexPath)
-    case delete(IndexPath)
-}
-
     
     private func hideLastSeparator(){
         let lastIndexPath = IndexPath(row: categories.count - 1, section: 0)

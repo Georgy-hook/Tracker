@@ -83,7 +83,6 @@ extension CategoryViewController {
         
         checkPlaceholder()
         viewModel.calculateChanges()
-        print(viewModel.changes)
         categoryTableView.set(with: viewModel.categories, didUpdate: viewModel.changes)
     }
     

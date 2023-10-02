@@ -67,7 +67,6 @@ extension ListCollectionViewCell{
             habbitTableView.topAnchor.constraint(equalTo: trackerName.bottomAnchor, constant: 24),
             habbitTableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             habbitTableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            //habbitTableView.heightAnchor.constraint(equalToConstant: 149)
         ])
     }
 }
@@ -77,7 +76,7 @@ extension ListCollectionViewCell:UITextFieldDelegate{
         guard let name = textField.text else {
             return
         }
-        TempStorage.shared.setName(name)
+        delegateVC?.setName(name)
         delegateVC?.shouldUpdateUI()
     }
     
