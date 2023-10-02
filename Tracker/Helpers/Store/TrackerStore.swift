@@ -144,6 +144,28 @@ final class TrackerStore: NSObject{
         return trackerCategories
     }
     
+    func getTracker(by uuid: String) throws -> Tracker? {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "id == %@", uuid)
+        fetchRequest.predicate = predicate
+        
+        
+        guard let trackerCoreData = fetchedResultsController?.fetchedObjects?.first else {
+            print("Tracker not found")
+            return nil
+        }
+        
+        do {
+            let tracker = try makeTracker(from: trackerCoreData)
+            return tracker
+        } catch {
+            throw error
+        }
+    }
+
+
+
+    
     func isEmpty() -> Bool {
         guard let objects = self.fetchedResultsController?.fetchedObjects else {
             return true

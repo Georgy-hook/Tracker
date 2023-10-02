@@ -106,8 +106,8 @@ extension TrackersCollectionViewCell {
     
     private func addSubviews() {
         addSubview(cardView)
-        addSubview(emojiTextField)
-        addSubview(descriptionLabel)
+        cardView.addSubview(emojiTextField)
+        cardView.addSubview(descriptionLabel)
         addSubview(counterLabel)
         addSubview(checkButton)
     }
@@ -170,6 +170,19 @@ extension TrackersCollectionViewCell{
         checkButton.isSelected = true
         checkButtonShouldTapped(with: checkButton.isSelected)
     }
+    
+    func getPreview() -> UIViewController? {
+        let viewController = UIViewController()
+        let anotherCardView = cardView
+        viewController.view.addSubview(anotherCardView)
+        NSLayoutConstraint.activate([
+            cardView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
+            cardView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            cardView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
+            cardView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
+        ])
+         return viewController
+     }
 }
 
 // MARK: - Actions

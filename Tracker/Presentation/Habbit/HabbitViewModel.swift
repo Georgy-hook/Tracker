@@ -13,6 +13,7 @@ final class HabbitViewModel{
     
     private let tempStorage = TempStorage.shared
     private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerStore = TrackerStore()
     private let mode: HabbitViewControllerMode
     
     init(mode:HabbitViewControllerMode) {
@@ -22,7 +23,9 @@ final class HabbitViewModel{
             case .create:
                 tempStorage.setID(UUID())
             case .edit(let ID):
-               return
+                let id = ID.uuidString
+                let tracker = try trackerStore.getTracker(by: id)
+                tempStorage.setTracker(tracker)
             }
         } catch {
             print(error)
@@ -61,7 +64,7 @@ final class HabbitViewModel{
     func addTracker(){
         guard let tracker = tempStorage.buildTracker() else { return }
         guard let title = tempStorage.getCategory() else { return }
-    
+        
         trackerCategoryStore.addTracker(tracker, toCategoryWithTitle: title)
     }
 }
