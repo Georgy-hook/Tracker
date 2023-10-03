@@ -189,7 +189,7 @@ extension TrackersCollectionViewCell{
 private extension TrackersCollectionViewCell{
     @objc func checkButtonDidTapped(){
         guard let tracker = tracker else { return }
-        let currentDay = delegateVC?.currentDate ?? Date()
+        let currentDay = delegateVC?.getCurrentDate() ?? Date()
         guard currentDay <= Date() else { return }
         
         checkButton.isSelected.toggle()

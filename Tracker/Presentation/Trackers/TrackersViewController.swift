@@ -11,8 +11,7 @@ protocol TrackersViewControllerProtocol: AnyObject{
     func addCompletedTracker(_ tracker: Tracker)
     func removeCompletedTracker(_ tracker: Tracker)
     func countRecords(forUUID uuid: UUID) -> Int
-    var currentDate:Date { get }
-    var completedTrackers: [TrackerRecord] {get}
+    func getCurrentDate() -> Date
 }
 
 final class TrackersViewController: UIViewController {
@@ -56,35 +55,7 @@ final class TrackersViewController: UIViewController {
     private let trackersCollectionView = TrackersCollectionView()
     
     //MARK: - Variables
-    private var trackersCategories:[TrackerCategory] = []
-    private var visibleTrackers:[TrackerCategory] = []
-    private let tempStorage = TempStorage.shared
-    private let dateFormatter = AppDateFormatter.shared
-    var completedTrackers: [TrackerRecord] = []
-    private let trackerStore = TrackerStore()
-    private let trackerRecordStore = TrackerRecordStore()
-    
-    var currentDate: Date = Date() {
-        didSet {
-            filterRelevantTrackers()
-            let completedID = trackerRecordStore.getCompletedID(with: currentDate)
-            setCompletedTrackers(with: completedID)
-            currentState = trackerStore.isEmpty() ? .notFound:.hide
-        }
-    }
-    
-    var currentState: placeholderState = .noData {
-        didSet{
-            updatePlaceholder(for: currentState)
-        }
-    }
-    
-    enum placeholderState{
-        case noData
-        case notFound
-        case hide
-    }
-    
+    private let viewModel = TrackersViewModel()
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,6 +65,27 @@ final class TrackersViewController: UIViewController {
         applyConstraints()
         
         searchController.searchResultsUpdater = self
+        
+        viewModel.$trackers.bind{ [weak self] _ in
+            guard let self = self else { return }
+            trackersCollectionView.set(cells: viewModel.trackers)
+        }
+        
+        viewModel.$currentState.bind{ [weak self] _ in
+            guard let self = self else { return }
+            updatePlaceholder(for: viewModel.currentState)
+        }
+        
+        viewModel.$currentDate.bind{ [weak self] _ in
+            guard let self = self else { return }
+            viewModel.filterRelevantTrackers(for: viewModel.currentDate)
+        }
+        
+        viewModel.$completedID.bind{ [weak self] _ in
+            guard let self = self else { return }
+            trackersCollectionView.setCompletedTrackers(with: viewModel.completedID)
+        }
+        viewModel.configure()
     }
 }
 
@@ -102,11 +94,7 @@ extension TrackersViewController{
     private func configureUI(){
         view.backgroundColor = UIColor(named: "YP White")
         configureNavBar()
-        trackerStore.delegate = trackersCollectionView
-        currentDate = datePicker.date
-        currentState = trackerStore.isEmpty() ? .noData:.hide
-        trackersCollectionView.delegateVC = self
-        trackersCollectionView.set(cells: trackerStore.trackers)
+        trackersCollectionView.delegateVC = self        
     }
     
     private func addSubviews(){
@@ -157,12 +145,12 @@ extension TrackersViewController{
     }
     
     @objc private func didTapLeftButton(){
-        tempStorage.resetTempTracker()
+        viewModel.resetTempTracker()
         present(ChooseTypeVC(), animated: true)
     }
     
     @objc private func dateChange(sender: UIDatePicker){
-        currentDate = sender.date
+        viewModel.setCurrentDate(with: sender.date)
     }
 }
 
@@ -170,64 +158,32 @@ extension TrackersViewController{
 extension TrackersViewController:UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
         guard let lowercaseSearchText = searchController.searchBar.searchTextField.text?.lowercased() else { return }
-        
-        let currentDay = dateFormatter.dayOfWeekInt(for: currentDate)
-        
-        do {
-            try trackerStore.searchTrackers(with: lowercaseSearchText, forDay: currentDay)
-            trackersCollectionView.set(cells: trackerStore.trackers)
-            currentState = trackerStore.isEmpty() ? .notFound:.hide
-        } catch {
-            print("Error searching for trackers: \(error)")
-        }
+        viewModel.searchRelevantTrackers(with: lowercaseSearchText)
     }
 }
 
 //MARK: - TrackersViewControllerProtocol
 extension TrackersViewController:TrackersViewControllerProtocol {
     func addCompletedTracker(_ tracker: Tracker) {
-        let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
-        do{
-            try trackerRecordStore.addNewRecord(newRecord)
-        } catch{
-            print("Error with completedTrackers: \(error)")
-        }
+        viewModel.addCompletedTracker(tracker)
     }
     
     func removeCompletedTracker(_ tracker: Tracker) {
-        do {
-            try trackerRecordStore.removeRecord(for: tracker.id, with: currentDate)
-        } catch {
-            print("No delete: \(error)")
-        }
-    }
-    
-    func setCompletedTrackers(with completedID:Set<UUID>){
-        trackersCollectionView.setCompletedTrackers(with: completedID)
+        viewModel.removeCompletedTracker(tracker)
     }
     
     func countRecords(forUUID uuid: UUID) -> Int{
-        return trackerRecordStore.countRecords(forUUID: uuid)
+        return viewModel.countRecords(forUUID: uuid)
     }
     
+    func getCurrentDate() -> Date{
+        return viewModel.currentDate
+    }
 }
 
 //MARK: - Filter methods
 extension TrackersViewController{
-    private func filterRelevantTrackers() {
-        let currentDay = dateFormatter.dayOfWeekInt(for: currentDate)
-        
-        do {
-            try trackerStore.fetchRelevantTrackers(forDay: currentDay)
-            trackersCollectionView.set(cells: trackerStore.trackers)
-        }
-        catch {
-           print(error)
-        }
-       
-    }
-
-    private func updatePlaceholder(for state: placeholderState) {
+    private func updatePlaceholder(for state: PlaceholderState) {
         placeholderImageView.isHidden = false
         initialLabel.isHidden = false
         switch state {
