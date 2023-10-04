@@ -46,6 +46,10 @@ final class CategoryViewModel{
         return !trackerCategoryStore.isEmpty()
     }
     
+    func isCategorySelected(_ category: String) -> Bool{
+        return tempStorage.getCategory() == category
+    }
+    
     func calculateChanges(){
         changes = []
         

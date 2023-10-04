@@ -120,8 +120,8 @@ extension HabbitViewController {
         cancelButton.addTarget(self, action: #selector(didCancelButtonTapped), for: .touchUpInside)
         
         shouldUpdateUI()
+        
     }
-    
     private func addSubviews() {
         stackView.addArrangedSubview(cancelButton)
         stackView.addArrangedSubview(addButton)

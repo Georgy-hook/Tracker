@@ -14,7 +14,6 @@ class CategoryTableView:UITableView{
     private var categories:[String] =  []
     
     weak var delegateVC: CategoryViewControllerProtocol?
-    private let trackerCategoryStore = TrackerCategoryStore()
     
     // MARK: - Initiliazation
     init() {
@@ -28,6 +27,7 @@ class CategoryTableView:UITableView{
         self.tintColor = .clear
         delegate = self
         dataSource = self
+        register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.reuseId)
     }
     
     override func layoutSubviews() {
@@ -50,11 +50,10 @@ extension CategoryTableView:UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
-        cell.backgroundColor = UIColor(named: "YP Background")
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        cell.textLabel?.textColor = UIColor(named: "YP Black")
-        cell.textLabel?.text = categories[indexPath.row]
+        guard let cell = self.dequeueReusableCell(withIdentifier: CategoryCell.reuseId) as? CategoryCell
+        else { return UITableViewCell() }
+        let selected = delegateVC?.isCategorySelected(categories[indexPath.row]) ?? false
+        cell.set(with: categories[indexPath.row], selected: selected)
         return cell
     }
 }
@@ -76,7 +75,6 @@ extension CategoryTableView:UITableViewDelegate{
 
 extension CategoryTableView {
     func set(with newCategories: [String], didUpdate changes: [CategoryChange]) {
-        let oldCategories = self.categories
         self.categories = newCategories
 
         updateTableViewHeight()

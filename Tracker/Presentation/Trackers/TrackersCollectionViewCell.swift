@@ -76,7 +76,6 @@ class TrackersCollectionViewCell: UICollectionViewCell {
         applyConstraints()
         checkButton.addTarget(self, action: #selector(checkButtonDidTapped), for: .touchUpInside)
     }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = 15

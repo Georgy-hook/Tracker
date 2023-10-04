@@ -12,6 +12,7 @@ protocol CategoryViewControllerProtocol:AnyObject{
     func setCategory(named category:String)
     func didEditButtonTapped(on category:String)
     func deleteCategory(at categoryName:String)
+    func isCategorySelected(_ category: String) -> Bool
 }
 
 final class CategoryViewController: UIViewController {
@@ -154,6 +155,10 @@ extension CategoryViewController:CategoryViewControllerProtocol{
     func deleteCategory(at categoryName:String){
         viewModel.deleteCategory(at: categoryName)
         checkPlaceholder()
+    }
+    
+    func isCategorySelected(_ category: String) -> Bool{
+        return viewModel.isCategorySelected(category)
     }
 }
 

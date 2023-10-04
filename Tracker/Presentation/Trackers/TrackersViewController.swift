@@ -56,6 +56,7 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - Variables
     private let viewModel = TrackersViewModel()
+    
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,6 +87,11 @@ final class TrackersViewController: UIViewController {
             trackersCollectionView.setCompletedTrackers(with: viewModel.completedID)
         }
         viewModel.configure()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches,with: event)
+        view.endEditing(true)
     }
 }
 

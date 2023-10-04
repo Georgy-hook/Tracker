@@ -11,9 +11,13 @@ final class OnboardingViewController:UIPageViewController{
     
     // MARK: - UI Elements
     lazy var pages: [UIViewController] = {
-        let firstVC = PageViewController(image: UIImage(named: "FirstVCBackground"), labelText: "Отслеживайте только то, что хотите", buttonTitle: "Вот это технологии!")
+        let firstVC = PageViewController(image: UIImage(named: "FirstVCBackground"),
+                                         labelText: "Отслеживайте только то, что хотите",
+                                         buttonTitle: "Вот это технологии!")
         
-        let secondVC = PageViewController(image: UIImage(named: "SecondVCBackground"), labelText: "Даже если это  не литры воды и йога", buttonTitle: "Вот это технологии!")
+        let secondVC = PageViewController(image: UIImage(named: "SecondVCBackground"),
+                                          labelText: "Даже если это  не литры воды и йога",
+                                          buttonTitle: "Вот это технологии!")
 
         return [firstVC,secondVC]
     }()
