@@ -40,7 +40,7 @@ final class TabBarController: UITabBarController {
         let nav = UINavigationController(rootViewController: trackersViewController)
         
         trackersViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("Trackers", comment: ""),
             image: UIImage(named: "tabTrackers"),
             selectedImage: nil
         )
@@ -48,7 +48,7 @@ final class TabBarController: UITabBarController {
         let statisticViewController = StatisticViewController()
             
         statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("Statistics", comment: ""),
             image: UIImage(named: "tabStatistic"),
             selectedImage: nil
         )

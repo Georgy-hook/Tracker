@@ -133,21 +133,21 @@ extension TrackersCollectionView{
     }
     
     func contextMenuConfiguration(for indexPath: IndexPath) -> UIContextMenuConfiguration {
-        let fixAction = UIAction(title: "Закрепить") { [weak self] action in
+        let pinAction = UIAction(title: NSLocalizedString("Pin", comment: "")) { [weak self] action in
               guard let self = self else { return }
               let tracker = self.cells[indexPath.section].trackers[indexPath.item]
             
              // self.delegateVC?.fixTracker(tracker)
           }
           
-          let editAction = UIAction(title: "Редактировать") { [weak self] action in
+          let editAction = UIAction(title: NSLocalizedString("Edit", comment: "")) { [weak self] action in
               guard let self = self else { return }
               let tracker = self.cells[indexPath.section].trackers[indexPath.item]
               
               //self.delegateVC?.editTracker(tracker)
           }
           
-          let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] action in
+          let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: ""), attributes: .destructive) { [weak self] action in
               guard let self = self else { return }
               let tracker = self.cells[indexPath.section].trackers[indexPath.item]
               
@@ -161,7 +161,7 @@ extension TrackersCollectionView{
         }
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-            UIMenu(title: "", children: [fixAction,editAction, deleteAction])
+            UIMenu(title: "", children: [pinAction,editAction, deleteAction])
         })
     }
 }

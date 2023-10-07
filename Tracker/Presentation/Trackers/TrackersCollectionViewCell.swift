@@ -15,7 +15,7 @@ class TrackersCollectionViewCell: UICollectionViewCell {
     
     private var completedDays = 0 {
         didSet {
-            counterLabel.text = dayToString(completedDays)
+            counterLabel.text = String.localizedStringWithFormat(NSLocalizedString("Completed days", comment: "Number of completed days"), completedDays)
         }
     }
     
@@ -99,7 +99,7 @@ extension TrackersCollectionViewCell {
         emojiTextField.text = tracker.emoji
         descriptionLabel.text = tracker.name
         cardView.backgroundColor = UIColor(named: tracker.color)
-        counterLabel.text = dayToString(completedDays)
+        counterLabel.text = String.localizedStringWithFormat(NSLocalizedString("Completed days", comment: "Number of completed days"), completedDays)
         completedDays = delegateVC?.countRecords(forUUID: tracker.id) ?? 6
     }
     
@@ -137,25 +137,6 @@ extension TrackersCollectionViewCell {
             counterLabel.trailingAnchor.constraint(equalTo: checkButton.leadingAnchor, constant: -8),
             counterLabel.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16)
         ])
-    }
-    
-    private func dayToString(_ num: Int) -> String {
-        let suffix: String
-        
-        switch num % 10 {
-        case 1 where (num - 1) % 100 != 10:
-            suffix = "день"
-        case 2 where (num - num % 10) % 100 != 10:
-            suffix = "дня"
-        case 3 where (num - num % 10) % 100 != 10:
-            suffix = "дня"
-        case 4 where (num - num % 10) % 100 != 10:
-            suffix = "дня"
-        default:
-            suffix = "дней"
-        }
-        
-        return "\(num) \(suffix)"
     }
 }
 
