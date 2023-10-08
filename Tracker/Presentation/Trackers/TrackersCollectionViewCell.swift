@@ -71,7 +71,7 @@ class TrackersCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .clear
         addSubviews()
         applyConstraints()
         checkButton.addTarget(self, action: #selector(checkButtonDidTapped), for: .touchUpInside)

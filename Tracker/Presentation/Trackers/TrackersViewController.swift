@@ -31,8 +31,12 @@ final class TrackersViewController: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
+        datePicker.overrideUserInterfaceStyle = .light
         datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.tintColor = UIColor(named: "YP Blue")
+        datePicker.layer.cornerRadius = 8
+        datePicker.clipsToBounds = true
+        datePicker.backgroundColor = UIColor(named: "DatePicker Background")
         return datePicker
     }()
     
