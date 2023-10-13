@@ -102,6 +102,23 @@ final class TrackersViewModel{
     func countRecords(forUUID uuid: UUID) -> Int{
         return trackerRecordStore.countRecords(forUUID: uuid)
     }
+    
+    func editTracker(_ tracker: Tracker) {
+        
+    }
+    
+    func deleteTracker(_ tracker: Tracker) {
+        do{
+            try trackerStore.deleteObject(at: tracker.id)
+            
+        } catch{
+            print(error)
+        }
+    }
+    
+    func pinTracker(_ tracker: Tracker) {
+        
+    }
 }
 
 extension TrackersViewModel:TrackerStoreDelegate{

@@ -151,17 +151,8 @@ extension TrackersCollectionViewCell{
         checkButtonShouldTapped(with: checkButton.isSelected)
     }
     
-    func getPreview() -> UIViewController? {
-        let viewController = UIViewController()
-        let anotherCardView = cardView
-        viewController.view.addSubview(anotherCardView)
-        NSLayoutConstraint.activate([
-            cardView.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor),
-            cardView.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-            cardView.topAnchor.constraint(equalTo: viewController.view.topAnchor),
-            cardView.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-        ])
-         return viewController
+    func getPreview() -> UITargetedPreview {
+       return UITargetedPreview(view: cardView)
      }
 }
 
