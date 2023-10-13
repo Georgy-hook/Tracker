@@ -191,7 +191,6 @@ extension TrackersViewController:TrackersViewControllerProtocol {
     }
 }
 
-//MARK: - Filter methods
 extension TrackersViewController{
     private func updatePlaceholder(for state: PlaceholderState) {
         placeholderImageView.isHidden = false

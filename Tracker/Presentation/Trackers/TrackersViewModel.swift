@@ -36,6 +36,7 @@ final class TrackersViewModel{
     private let dateFormatter = AppDateFormatter.shared
     private let trackerRecordStore = TrackerRecordStore()
     private let tempStorage = TempStorage.shared
+    private let analyticsService = AnalyticsService()
     
     init() {
         trackerStore.delegate = self
@@ -83,6 +84,7 @@ final class TrackersViewModel{
     func addCompletedTracker(_ tracker: Tracker) {
         let newRecord = TrackerRecord(recordID: tracker.id, date: currentDate)
         do{
+            analyticsService.report(event: .click, screen: .main, item: .track)
             try trackerRecordStore.addNewRecord(newRecord)
         } catch{
             print("Error with completedTrackers: \(error)")

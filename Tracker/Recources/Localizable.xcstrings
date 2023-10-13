@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Average value" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Среднее значение"
+          }
+        }
+      }
+    },
+    "Best period" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лучший период"
+          }
+        }
+      }
+    },
     "Completed days" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -99,6 +121,17 @@
         }
       }
     },
+    "Perfect days" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Идеальные дни"
+          }
+        }
+      }
+    },
     "Pin" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -132,6 +165,17 @@
         }
       }
     },
+    "There is nothing to analyze yet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Анализировать пока нечего"
+          }
+        }
+      }
+    },
     "Trackers" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -145,6 +189,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Трекеры"
+          }
+        }
+      }
+    },
+    "Trackers completed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Трекеров завершено"
           }
         }
       }
