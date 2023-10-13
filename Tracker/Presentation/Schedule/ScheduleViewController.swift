@@ -42,8 +42,6 @@ final class ScheduleViewController: UIViewController {
         configureUI()
         addSubviews()
         applyConstraints()
-        
-        // Additional setup after loading the view.
     }
 }
 

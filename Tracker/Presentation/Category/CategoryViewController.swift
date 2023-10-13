@@ -8,6 +8,11 @@ import UIKit
 
 protocol CategoryViewControllerProtocol:AnyObject{
     func presentHabbitVC()
+    func getCountOfCategories() -> Int
+    func setCategory(named category:String)
+    func didEditButtonTapped(on category:String)
+    func deleteCategory(at categoryName:String)
+    func isCategorySelected(_ category: String) -> Bool
 }
 
 final class CategoryViewController: UIViewController {
@@ -48,22 +53,23 @@ final class CategoryViewController: UIViewController {
         return button
     }()
     let categoryTableView = CategoryTableView()
+ 
     
     // MARK: - Variables
-    var categories:[String] = []{
-        didSet{
-            checkPlaceholder()
-            categoryTableView.set(with: categories)
-        }
-    }
-    private let trackerCategoryStore = TrackerCategoryStore()
-    
+    private var viewModel = CategoryViewModel()
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        viewModel.$categories.bind{ [weak self] _ in
+            guard let self = self else { return }
+            checkPlaceholder()
+            viewModel.calculateChanges()
+            categoryTableView.set(with: viewModel.categories, didUpdate: viewModel.changes)
+        }
+        
         categoryTableView.delegateVC = self
-        categories = trackerCategoryStore.trackersCategories.map{$0.title}
-        trackerCategoryStore.delegate = categoryTableView
+        
         configureUI()
         addSubviews()
         applyConstraints()
@@ -75,6 +81,10 @@ extension CategoryViewController {
     private func configureUI() {
         view.backgroundColor = UIColor(named: "YP White")
         addButton.addTarget(self, action: #selector(didAddButtonTapped), for: .touchUpInside)
+        
+        checkPlaceholder()
+        viewModel.calculateChanges()
+        categoryTableView.set(with: viewModel.categories, didUpdate: viewModel.changes)
     }
     
     private func addSubviews() {
@@ -119,7 +129,7 @@ extension CategoryViewController {
 // MARK: - Actions
 extension CategoryViewController{
     @objc private func didAddButtonTapped(){
-        present(NewCategoryViewController(), animated: true)
+        present(NewCategoryViewController(mode: .create), animated: true)
     }
 }
 
@@ -129,11 +139,36 @@ extension CategoryViewController:CategoryViewControllerProtocol{
         presentingViewController.shouldUpdateUI()
         dismiss(animated: true)
     }
+    
+    func getCountOfCategories() -> Int{
+        return viewModel.getCountOfCategories()
+    }
+    
+    func setCategory(named category:String){
+        viewModel.setCategory(named: category)
+    }
+    
+    func didEditButtonTapped(on category:String){
+        present(NewCategoryViewController(mode: .edit(categoryName: category)), animated: true)
+    }
+    
+    func deleteCategory(at categoryName:String){
+        viewModel.deleteCategory(at: categoryName)
+        checkPlaceholder()
+    }
+    
+    func isCategorySelected(_ category: String) -> Bool{
+        return viewModel.isCategorySelected(category)
+    }
 }
 
 extension CategoryViewController{
     func checkPlaceholder(){
-        guard !trackerCategoryStore.isEmpty() else { return }
+        guard viewModel.shouldUpdatePlaceholder() else {
+            starImageView.isHidden = false
+            initialLabel.isHidden = false
+            return
+        }
         starImageView.isHidden = true
         initialLabel.isHidden = true
     }

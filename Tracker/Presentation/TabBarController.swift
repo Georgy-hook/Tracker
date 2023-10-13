@@ -37,22 +37,23 @@ final class TabBarController: UITabBarController {
         super.viewWillAppear(animated)
         
         let trackersViewController = TrackersViewController()
-        let nav = UINavigationController(rootViewController: trackersViewController)
+        let navTrackersViewController = UINavigationController(rootViewController: trackersViewController)
         
         trackersViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("Trackers", comment: ""),
             image: UIImage(named: "tabTrackers"),
             selectedImage: nil
         )
         
         let statisticViewController = StatisticViewController()
-            
+        let navStatisticViewController = UINavigationController(rootViewController: statisticViewController)
+        
         statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("Statistics", comment: ""),
             image: UIImage(named: "tabStatistic"),
             selectedImage: nil
         )
         
-        self.viewControllers = [nav, statisticViewController]
+        self.viewControllers = [navTrackersViewController, navStatisticViewController]
     }
 }

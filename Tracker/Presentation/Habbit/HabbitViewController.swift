@@ -6,15 +6,34 @@
 //
 import UIKit
 
+enum HabbitViewControllerMode {
+    case create
+    case edit(ID: UUID)
+}
+
 protocol HabbitViewControllerProtocol: AnyObject{
     func presentCategoryVC()
     func presentSheduleVC()
     func shouldUpdateUI()
     var isIrregular:Bool {get}
+    func setEmoji(_ emoji:String)
+    func setColor(_ color:String)
+    func setName(_ name:String)
+    func getCategory() -> String
+    func getShedule() -> [Int]
 }
 
 final class HabbitViewController: UIViewController {
-    
+    // MARK: - Init
+    init(mode: HabbitViewControllerMode) {
+        self.mode = mode
+        self.viewModel = HabbitViewModel(mode: mode)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     // MARK: - UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -60,12 +79,13 @@ final class HabbitViewController: UIViewController {
     let sectionsCollectionView = HabbitCollectionView()
     
     // MARK: - Variables
-    private let tempStorage = TempStorage.shared
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private let viewModel:HabbitViewModel
+    private let mode: HabbitViewControllerMode
+    
     var isIrregular = false {
         didSet{
             if isIrregular{
-                tempStorage.setSchedule([0,1,2,3,4,5,6])
+                viewModel.setSchedule([0,1,2,3,4,5,6])
                 titleLabel.text = "Новое нерегулярное событие"
             }
         }
@@ -74,12 +94,16 @@ final class HabbitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        viewModel.$completed.bind{ [weak self] _ in
+            guard let self = self else { return }
+            shouldOpenButton(viewModel.completed)
+        }
+        
         configureUI()
         addSubviews()
         applyConstraints()
         
         sectionsCollectionView.delegateVC = self
-        tempStorage.setID(UUID())
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -96,8 +120,8 @@ extension HabbitViewController {
         cancelButton.addTarget(self, action: #selector(didCancelButtonTapped), for: .touchUpInside)
         
         shouldUpdateUI()
+        
     }
-    
     private func addSubviews() {
         stackView.addArrangedSubview(cancelButton)
         stackView.addArrangedSubview(addButton)
@@ -124,6 +148,16 @@ extension HabbitViewController {
    
         ])
     }
+    
+    private func shouldOpenButton(_ trackerComplete:Bool){
+        if trackerComplete {
+            addButton.isUserInteractionEnabled = true
+            addButton.backgroundColor = UIColor(named: "YP Black")
+        } else{
+            addButton.isUserInteractionEnabled = false
+            addButton.backgroundColor = UIColor(named: "YP Gray")
+        }
+    }
 }
 
 // MARK: - HabbitViewControllerProtocol
@@ -138,24 +172,35 @@ extension HabbitViewController:HabbitViewControllerProtocol{
     
     func shouldUpdateUI(){
         sectionsCollectionView.shouldUpdateTableView()
-        
-        guard tempStorage.buildTracker() != nil else {
-            addButton.isUserInteractionEnabled = false
-            addButton.backgroundColor = UIColor(named: "YP Gray")
-            return
-        }
-        addButton.isUserInteractionEnabled = true
-        addButton.backgroundColor = UIColor(named: "YP Black")
+        viewModel.shouldUpdateUI()
+    }
+    
+    func setEmoji(_ emoji:String){
+        viewModel.setEmoji(emoji)
+    }
+    
+    func setColor(_ color:String){
+        viewModel.setColor(color)
+    }
+    
+    func setName(_ name:String){
+        viewModel.setName(name)
+    }
+    
+    func getCategory() -> String{
+        viewModel.getCategory()
+    }
+    
+    func getShedule() -> [Int]{
+        viewModel.getShedule()
     }
 }
 
 // MARK: - Actions
 extension HabbitViewController{
     @objc private func didAddButtonTapped(){
-        guard let tracker = tempStorage.buildTracker() else { return }
-        guard let title = tempStorage.getCategory() else { return }
-    
-        trackerCategoryStore.addTracker(tracker, toCategoryWithTitle: title)
+        viewModel.addTracker()
+        
         let tabBarController = TabBarController()
         tabBarController.modalPresentationStyle = .fullScreen
         present(tabBarController, animated: true)

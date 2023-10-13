@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,7 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        guard let configuration = YMMYandexMetricaConfiguration(apiKey: "ec16d2c9-47d6-4e64-a2a3-21bddcf668c2") else {
+            return true
+        }
+            
+        YMMYandexMetrica.activate(with: configuration)
         return true
     }
 

@@ -7,8 +7,21 @@
 
 import UIKit
 
+enum CategoryViewControllerMode {
+    case create
+    case edit(categoryName: String)
+}
+
 final class NewCategoryViewController: UIViewController {
-    
+    // MARK: - Init
+    init(mode: CategoryViewControllerMode) {
+        self.mode = mode
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     // MARK: - UI Elements
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -45,7 +58,8 @@ final class NewCategoryViewController: UIViewController {
     
     // MARK: - Variables
     let trackerCategoryStore = TrackerCategoryStore()
-    
+    private var viewModel = NewCategoryViewModel()
+    private let mode: CategoryViewControllerMode
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +82,15 @@ extension NewCategoryViewController {
         addButton.addTarget(self, action: #selector(didAddButtonTapped), for: .touchUpInside)
         
         categoryName.delegate = self
+        
+        switch mode {
+        case .create:
+            titleLabel.text = "Новая категория"
+            categoryName.text = nil
+        case .edit(let categoryName):
+            titleLabel.text = "Редактирование категории"
+            self.categoryName.text = categoryName
+        }
     }
     
     private func addSubviews() {
@@ -97,17 +120,12 @@ extension NewCategoryViewController {
 // MARK: - Actions
 extension NewCategoryViewController{
     @objc private func didAddButtonTapped(){
-        guard let categoryVC = presentingViewController as? CategoryViewController else { return }
-        guard let categoryName = categoryName.text else { return }
-        do{
-           try trackerCategoryStore.createCategory(withTitle: categoryName)
-        }
-        catch{
-            print(error)
-        }
-        categoryVC.checkPlaceholder()
-        dismiss(animated: true)
-    }
+         guard let categoryVC = presentingViewController as? CategoryViewController else { return }
+         guard let categoryName = categoryName.text else { return }
+         viewModel.shouldUpdateCategoryStore(with: categoryName, mode: mode)
+         categoryVC.checkPlaceholder()
+         dismiss(animated: true)
+     }
 }
 
 extension NewCategoryViewController:UITextFieldDelegate{
@@ -120,6 +138,7 @@ extension NewCategoryViewController:UITextFieldDelegate{
         addButton.isUserInteractionEnabled = true
         addButton.backgroundColor = UIColor(named: "YP Black")
     }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         return textField.resignFirstResponder()
     }

@@ -15,7 +15,7 @@ class TrackersCollectionViewCell: UICollectionViewCell {
     
     private var completedDays = 0 {
         didSet {
-            counterLabel.text = dayToString(completedDays)
+            counterLabel.text = String.localizedStringWithFormat(NSLocalizedString("Completed days", comment: "Number of completed days"), completedDays)
         }
     }
     
@@ -71,12 +71,11 @@ class TrackersCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .clear
         addSubviews()
         applyConstraints()
         checkButton.addTarget(self, action: #selector(checkButtonDidTapped), for: .touchUpInside)
     }
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = 15
@@ -100,14 +99,14 @@ extension TrackersCollectionViewCell {
         emojiTextField.text = tracker.emoji
         descriptionLabel.text = tracker.name
         cardView.backgroundColor = UIColor(named: tracker.color)
-        counterLabel.text = dayToString(completedDays)
+        counterLabel.text = String.localizedStringWithFormat(NSLocalizedString("Completed days", comment: "Number of completed days"), completedDays)
         completedDays = delegateVC?.countRecords(forUUID: tracker.id) ?? 6
     }
     
     private func addSubviews() {
         addSubview(cardView)
-        addSubview(emojiTextField)
-        addSubview(descriptionLabel)
+        cardView.addSubview(emojiTextField)
+        cardView.addSubview(descriptionLabel)
         addSubview(counterLabel)
         addSubview(checkButton)
     }
@@ -139,25 +138,6 @@ extension TrackersCollectionViewCell {
             counterLabel.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16)
         ])
     }
-    
-    private func dayToString(_ num: Int) -> String {
-        let suffix: String
-        
-        switch num % 10 {
-        case 1 where (num - 1) % 100 != 10:
-            suffix = "день"
-        case 2 where (num - num % 10) % 100 != 10:
-            suffix = "дня"
-        case 3 where (num - num % 10) % 100 != 10:
-            suffix = "дня"
-        case 4 where (num - num % 10) % 100 != 10:
-            suffix = "дня"
-        default:
-            suffix = "дней"
-        }
-        
-        return "\(num) \(suffix)"
-    }
 }
 
 // MARK: - Cell's methods
@@ -170,13 +150,17 @@ extension TrackersCollectionViewCell{
         checkButton.isSelected = true
         checkButtonShouldTapped(with: checkButton.isSelected)
     }
+    
+    func getPreview() -> UITargetedPreview {
+       return UITargetedPreview(view: cardView)
+     }
 }
 
 // MARK: - Actions
 private extension TrackersCollectionViewCell{
     @objc func checkButtonDidTapped(){
         guard let tracker = tracker else { return }
-        let currentDay = delegateVC?.currentDate ?? Date()
+        let currentDay = delegateVC?.getCurrentDate() ?? Date()
         guard currentDay <= Date() else { return }
         
         checkButton.isSelected.toggle()

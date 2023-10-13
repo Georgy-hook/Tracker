@@ -54,8 +54,8 @@ extension HabbitTableView:UITableViewDataSource{
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = .clear
         
-        cellDetailTexts[0] = TempStorage.shared.getCategory() ?? ""
-        cellDetailTexts[1] = formatWeekdays(TempStorage.shared.getShedule())
+        cellDetailTexts[0] = delegateVC?.getCategory() ?? ""
+        cellDetailTexts[1] = formatWeekdays(delegateVC?.getShedule())
         cell.detailTextLabel?.text = cellDetailTexts[indexPath.row]
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = UIColor(named: "YP Gray")

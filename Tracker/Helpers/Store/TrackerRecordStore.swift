@@ -26,8 +26,7 @@ struct TrackerRecordStoreUpdate {
 
 protocol TrackerRecordStoreDelegate: AnyObject{
     func store(
-        _ store: TrackerRecordStore,
-        didUpdate update: TrackerRecordStoreUpdate
+        _ store: TrackerRecordStore
     )
 }
 
@@ -38,7 +37,7 @@ final class TrackerRecordStore: NSObject{
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     private let trackerStore = TrackerStore()
     
-    weak var delegate: TrackerStoreDelegate?
+    weak var delegate: TrackerRecordStoreDelegate?
     
     var completedTrackers: [TrackerRecord] {
         guard
@@ -148,13 +147,12 @@ final class TrackerRecordStore: NSObject{
 
         return filteredObjects.count
     }
-
-
-    
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
 extension TrackerRecordStore:NSFetchedResultsControllerDelegate{
-    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.store(self)
+    }
 }
 

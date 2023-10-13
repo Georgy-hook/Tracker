@@ -23,11 +23,20 @@ class TempStorage {
             guard name != "" && color != "" && emoji != "" && schedule != [] && category != "" else { return false }
             
             return true
-          }
+        }
     }
     private var tempTracker: TempTracker = TempTracker()
     
     private init() {}
+    
+    func setTracker(_ tracker: Tracker?) {
+        guard let tracker = tracker else { return }
+        tempTracker.id = tracker.id
+        tempTracker.name = tracker.name
+        tempTracker.color = tracker.color
+        tempTracker.emoji = tracker.emoji
+        tempTracker.schedule = tracker.schedule
+    }
     
     func setID(_ id: UUID) {
         tempTracker.id = id
@@ -66,7 +75,7 @@ class TempStorage {
     
     func buildTracker() -> Tracker? {
         guard tempTracker.isComplete else { return nil }
-
+        
         return Tracker(
             id: tempTracker.id!,
             name: tempTracker.name!,

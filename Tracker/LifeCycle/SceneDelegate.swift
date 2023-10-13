@@ -14,12 +14,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
+        let isAppAlreadyLaunchedOnce = UserDefaults.standard.bool(forKey: "isAppAlreadyLaunchedOnce")
+        
         window = UIWindow(windowScene: windowScene)
         window?.windowScene = windowScene
         window?.makeKeyAndVisible()
         
         
-        window?.rootViewController = TabBarController()
+        window?.rootViewController = isAppAlreadyLaunchedOnce ? TabBarController():OnboardingViewController()
+        
+        guard !isAppAlreadyLaunchedOnce else { return }
+        UserDefaults.standard.set(true, forKey: "isAppAlreadyLaunchedOnce")
+        UserDefaults.standard.synchronize()
+        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
